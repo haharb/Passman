@@ -3,6 +3,8 @@ import fastify from "fastify";// fast web framewor
 import jwt from "@fastify/jwt";
 import path from "path";
 import cookie from "@fastify/cookie";
+import { FastifyRequest } from "fastify";
+import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import fs from "fs";
@@ -35,6 +37,7 @@ function createServer(){
             const user = await request.jwtVerify<{
                 _id: string;
             }>();
+            request.user = user;
         } catch (e) {
             return reply.send(e);
         }
