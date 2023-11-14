@@ -8,6 +8,8 @@ import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import fs from "fs";
+import userRoutes from "../modules/vault/vault.route";
+import vaultRoutes from "../modules/vault/vault.route";
 function createServer(){
 
     const app = fastify();
@@ -42,6 +44,8 @@ function createServer(){
             return reply.send(e);
         }
     });
+    app.register(userRoutes, { prefix: "api/users"});
+    app.register(vaultRoutes, { prefix: "api/vault"});
     return app;
 
 }
