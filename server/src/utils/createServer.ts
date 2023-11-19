@@ -16,9 +16,9 @@ function createServer(){
     app.register(jwt, {
         secret: {
             private: fs.readFileSync(
-                `${(path.join(process.cwd()), "certs")}/private.key`//cwd returns current working directory for project, private key to verify certificate
+                `${(path.join(process.cwd()), "certs")}/private_key.pem`//cwd returns current working directory for project, private key to verify certificate
                 ),
-                public: fs.readFileSync(`${(path.join(process.cwd()), "certs")}/public.key`)// public key to verify certificate
+                public: fs.readFileSync(`${(path.join(process.cwd()), "certs")}/public_key.pem`)// public key to verify certificate
             },
             cookie:{
                 cookieName: "accessToken",
