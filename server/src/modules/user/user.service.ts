@@ -3,10 +3,11 @@ import { UserModel } from "./user.model";
 import crypto from "crypto";
 // Creating a user
 export async function createUser(input: {
-    hashedPassword: string
-    hashedEmail: string
+    hashedCredentials: string
 }){
-    return UserModel.create(input);
+    return UserModel.create({
+        hashedCredentials: input.hashedCredentials
+    });
 }
 
 // Generating a salt for passwords

@@ -6,11 +6,19 @@ import {useState} from 'react'
 import RegisterForm from '../components/RegisterForm'
 import LoginForm from '../components/LoginForm'
 import Vault from '../components/Vault'
+import { NextPage } from 'next/types'
 
+export interface VaultItem{
+  website: string;
+  username: string;
+  password: string;
+}
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
-  const [step, setStep] = useState<'login' | 'register' | 'vault'>('register')
+const Home: NextPage = () => {
+  const [step, setStep] = useState<'login' | 'register' | 'vault'>('register');
+  const [vault, setVault] = useState<VaultItem[]>([]);
+  const [vaultKey, setVaultKey] = useState("");
   return (
       <div className={styles.container}>
       <Head>
@@ -19,10 +27,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {step === 'register' && <RegisterForm/>}
+        {step === 'register' && <RegisterForm setStep={setStep} setVaultKey={setVaultKey}/>}
         {step === 'login' && <LoginForm/>}
         {step === 'vault' && <Vault/>}
       </main>
       </div>
-  )
-}
+  );
+};
+
+export default Home;

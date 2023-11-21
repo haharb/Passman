@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import createServer from "./utils/createServer";
 import logger from "./utils/logger";
-import { disconnectFromDb } from "./utils/db";
+import { connectToDb, disconnectFromDb } from "./utils/db";
 
 function dbShutDown(signal: string, app: FastifyInstance){// Shuts down db gracefully.
     process.on(signal, async() =>{// What to do when a shutdown signal (SIGTERM or SIGINT for example) is received.
@@ -27,6 +27,7 @@ async function main(){
         const url = await app.listen({port: 4000});
 
         logger.info(`Server is ready at ${url}`);
+        await connectToDb();
         logger.flush();
     }catch(error){
         logger.error(error);
