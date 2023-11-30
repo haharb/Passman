@@ -26,7 +26,7 @@ export async function registerUserHandler(request: FastifyRequest<{
         sameSite: false,
     }); //Matches cookie name when creating the server in createServer.ts
 
-    return reply.code(201).send({accessToken, vault: vault.data, salt})//if successful send the items
+    return reply.code(201).send({accessToken, vault: vault.data, salt});//if successful send the items
     }catch(error){
         logger.error(error, "error creating the user");
         return reply.code(500).send(error);
