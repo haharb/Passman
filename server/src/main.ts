@@ -24,7 +24,7 @@ async function main(){
     const app = createServer();
 
     try{
-        const url = await app.listen({port: 4000});
+        const url = await app.listen({ port: 4000, host: "0.0.0.0" });
 
         logger.info(`Server is ready at ${url}`);
         await connectToDb();

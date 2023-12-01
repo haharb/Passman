@@ -8,22 +8,24 @@ import { Dispatch, SetStateAction } from "react";
 import { VaultItem } from "../pages";
 
 function RegisterForm({
-    setVaultKey, 
-    setStep}: {
+    setVaultKey,
+    setStep,
+  }: {
     setVaultKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<'login' | 'register' | 'vault'>>;
-}){
+    setStep: Dispatch<SetStateAction<"login" | "register" | "vault">>;
+  }) {
     const {
         handleSubmit,
-        register, 
-        getValues, 
-        setValue, 
-        formState: {errors, isSubmitting},
-    } = useForm<{email: string, password: string, hashedCredentials: string}>();
+        register,
+        getValues,
+        setValue,
+        formState: { errors, isSubmitting },
+      } = useForm<{ email: string; password: string; hashedCredentials: string }>();
+    
 
     const mutation = useMutation(registerUser, {
         onSuccess: ({salt, vault}) =>{
-            const hashedCredentials = getValues("hashedCredentials")
+            const hashedCredentials = getValues("hashedCredentials");
             const vaultKey = generateVaultKey({
                 hashedCredentials,
                 salt,
@@ -32,10 +34,10 @@ function RegisterForm({
             window.sessionStorage.setItem("vk", vaultKey);
             setVaultKey(vaultKey);
             window.sessionStorage.setItem('vault', "");
-            setStep('vault')
+            setStep('vault');
         },
 
-    })
+    });
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
         const email = getValues('email');

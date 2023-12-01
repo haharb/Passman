@@ -11,7 +11,7 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "dev":"tsnd --exit-child --transpile-only src/main.ts"
+    "dev": "tsnd --exit-child --transpile-only src/main.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.1.0",
@@ -19,6 +19,7 @@
     "@fastify/jwt": "^7.2.1",
     "@typegoose/typegoose": "^11.5.0",
     "argon2": "^0.31.1",
+    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "fastify": "^4.23.2",
     "fastify-zod": "^1.4.0",

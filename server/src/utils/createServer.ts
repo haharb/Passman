@@ -11,7 +11,6 @@ import fs from "fs";
 import userRoutes from "../modules/vault/vault.route";
 import vaultRoutes from "../modules/vault/vault.route";
 function createServer(){
-
     const app = fastify();
     app.register(jwt, {
         secret: {
