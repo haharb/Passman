@@ -5,8 +5,8 @@ import { FastifyReply } from "fastify/types/reply";
 import { COOKIE_DOMAIN } from "../../constants";
 import logger from "../../utils/logger";
 export async function registerUserHandler(request: FastifyRequest<{
-    Body: Parameters<typeof createUser>[number];//We use the number as an index to avoid returning an array
-}>, reply: FastifyReply)
+    Body: Parameters<typeof createUser>[number];
+}>, reply: FastifyReply)//We use the number as an index to avoid returning an array
 {
     const body = request.body;
 
@@ -20,7 +20,7 @@ export async function registerUserHandler(request: FastifyRequest<{
     });
     reply.setCookie("token", accessToken, {
         domain: COOKIE_DOMAIN,
-        path : '/',
+        path : "/",
         secure: false, //If set to true, ensures that cookies are only sent through https connections
         httpOnly: true, //Cookie cant be accessed via javascript; only http
         sameSite: false,

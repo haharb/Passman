@@ -33,7 +33,7 @@ function RegisterForm({
         
             window.sessionStorage.setItem("vk", vaultKey);
             setVaultKey(vaultKey);
-            window.sessionStorage.setItem('vault', "");
+            window.sessionStorage.setItem("vault", "");
             setStep('vault');
         },
 
@@ -76,7 +76,7 @@ function RegisterForm({
                     required: "A password is required",
                     minLength: {
                         value: 6, 
-                        message: 'Password must be at least 6 characters long.'},
+                        message: "Password must be at least 6 characters long."},
             })}
             />
             <FormErrorMessage>

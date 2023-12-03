@@ -1,5 +1,5 @@
 function Vault() {
-return <div>vault</div>
+return <div>Vault</div>
 }
 
 export default Vault;
