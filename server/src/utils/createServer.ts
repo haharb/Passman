@@ -51,13 +51,13 @@ function createServer(){
             }>();
     
             request.user = user;
-            } catch (e) {
-            return reply.send(e);
+            } catch (error) {
+            return reply.send(error);
             }
         }
         );
-    app.register(userRoutes, { prefix: "api/users"});
-    app.register(vaultRoutes, { prefix: "api/vault"});
+    app.register(userRoutes);
+    app.register(vaultRoutes);
     return app;
 
 }

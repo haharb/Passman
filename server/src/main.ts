@@ -14,8 +14,6 @@ function dbShutDown(signal: string, app: FastifyInstance){// Shuts down db grace
         setTimeout(() => {
             process.exit(0);
         }, 1000); // Delay the process exit for 1 second (adjust as needed).
-
-
     });
 }
 console.log("Main test");
@@ -30,6 +28,7 @@ async function main(){
         await connectToDb();
         logger.flush();
     }catch(error){
+        console.log("Well its been a year")
         logger.error(error);
         logger.flush();
         process.exit(1);

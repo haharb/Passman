@@ -13,7 +13,7 @@ export async function registerHandler(request: FastifyRequest<{
     try {
         const user = await createUser(body);
         const salt = generateSalt();
-        const vault = await createVault({user: user._id.toString(), salt});//Double check this
+        const vault = await createVault({user: String(user._id), salt});//Double check this
         const accessToken = await reply.jwtSign({
             _id: user._id,
             email: user.email,
@@ -39,7 +39,7 @@ export async function loginHandler(request: FastifyRequest<{
     const user = await findUserByCredentials(request.body);
     if (!user){
         return reply.status(401).send({
-            message:"Password or email are invalid."
+            message:"Password/email invalid."
         });
     }
     const vault = await getVaultByUser(String(user._id));

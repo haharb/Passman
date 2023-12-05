@@ -1,7 +1,7 @@
 import axios from "axios"; //for making http requests
 //const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
-const userBase = 'http://localhost:4000/api/users';
-const vaultBase = 'http://localhost:4000/api/vault';
+const userBase = 'http://localhost:4000';
+const vaultBase = 'http://localhost:4000';
 export async function registerUser(payload: {
     hashedPassword: string;
     email: string;

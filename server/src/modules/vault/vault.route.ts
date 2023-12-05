@@ -7,7 +7,6 @@ function vaultRoutes(
     _: FastifyPluginOptions, 
     done: (err?: FastifyError) => void
  ) {
-
     app.put("/", {
         onRequest: [app.authenticate],
     },
