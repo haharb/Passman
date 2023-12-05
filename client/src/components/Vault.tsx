@@ -2,21 +2,47 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { VaultItem } from "../pages";
 import FormWrapper from "./FormWrapper";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { encryptVault } from "../crypto";
+import { useMutation } from "react-query";
+import { saveVault } from "../api";
 
 function Vault({ vault = [], vaultKey = ""}: {
     vault: VaultItem[],
-    vaultKey: "",
+    vaultKey: string,
 }) {
-    const {control, register, handleSubmit} = useForm();
+    const {control, register, handleSubmit} = useForm({
+        defaultValues: {
+            vault, 
+        },
+    });
     const {fields, append, remove} = useFieldArray({
         control,
         name: "vault",
     });
+    const mutation = useMutation(saveVault);
     return (
-    <FormWrapper>
+        <FormWrapper
+        onSubmit={handleSubmit(({ vault }) => {
+          console.log({ vault });
+          const encryptedVault = encryptVault({
+            vault: JSON.stringify({vault}), //Needs the vault property to be stringified, cant't just pass in vault
+            vaultKey,
+          });
+
+          window.sessionStorage.setItem("vault", JSON.stringify(vault)); //update session storage after saving vault
+
+          mutation.mutate({
+            encryptedVault,
+          });
+        })}
+      >
         {fields.map((field, index) => {
             return (
-            <Box display = "flex" key={field.id}>
+            <Box mt = "4"
+            mb="4"
+            display = "flex"
+            key={field.id}
+            alignItems="flex-end">
                 <FormControl>
                     <FormLabel htmlFor="service">
                         Service
@@ -55,6 +81,15 @@ function Vault({ vault = [], vaultKey = ""}: {
                         })}
                             />
                 </FormControl>
+
+                <Button type="button" 
+                bg="red.500" 
+                color="white"
+                fontSize="2xl"
+                ml="3" 
+                onClick = {() => remove(index)}>
+                -
+                </Button>
             </Box>
         );
     })}
@@ -63,6 +98,15 @@ function Vault({ vault = [], vaultKey = ""}: {
         >
         Add 
             </Button>
+
+
+    <Button
+    ml = "8"
+    color = "white"
+    background = "green"
+    type = "submit">
+        Save Vault
+    </Button>
     </FormWrapper>
     );
 }

@@ -1,7 +1,7 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {useForm} from "react-hook-form";
-import { generateVaultKey, hashCredentials } from "../crypto";
+import { generateVaultKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
@@ -20,14 +20,16 @@ function RegisterForm({
         getValues,
         setValue,
         formState: { errors, isSubmitting },
-      } = useForm<{ email: string; password: string; hashedCredentials: string }>();
+      } = useForm<{ email: string; password: string; hashedPassword: string }>();
     
 
     const mutation = useMutation(registerUser, {
         onSuccess: ({salt, vault}) =>{
-            const hashedCredentials = getValues("hashedCredentials");
+            const hashedPassword = getValues("hashedPassword");
+            const email = getValues("email");
             const vaultKey = generateVaultKey({
-                hashedCredentials,
+                hashedPassword,
+                email,
                 salt,
             });
         
@@ -42,11 +44,11 @@ function RegisterForm({
     <FormWrapper onSubmit={handleSubmit(() => {
         const email = getValues('email');
         const password = getValues('password');
-        const hashedCredentials = hashCredentials(email,password);
-        setValue("hashedCredentials", hashedCredentials);
+        const hashedPassword = hashPassword(password);
+        setValue("hashedPassword", hashedPassword);
         mutation.mutate({
             email,
-            hashedCredentials
+            hashedPassword,
         });
     })}>
         <Heading>Register</Heading>
