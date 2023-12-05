@@ -9,8 +9,8 @@ import Vault from '../components/Vault'
 import { NextPage } from 'next/types'
 
 export interface VaultItem{
-  website: string;
-  username: string;
+  service: string;
+  login: string;
   password: string;
 }
 const inter = Inter({ subsets: ['latin'] })
