@@ -1,13 +1,13 @@
 import axios from "axios"; //for making http requests
 //const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
-const userBase = 'http://localhost:4000';
-const vaultBase = 'http://localhost:4000';
-export async function registerUser(payload: {
+const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
+const vaultBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
+export function registerUser(payload: {
     hashedPassword: string;
     email: string;
   }) {
     try {
-        const response = await axios.post<{ salt: string; vault: string }>(
+        return axios.post<{ salt: string; vault: string }>(
         userBase,
         payload,
         {
@@ -19,13 +19,13 @@ export async function registerUser(payload: {
       throw error;  
     }
   }
-  export async function loginUser(payload: {
+  export function loginUser(payload: {
     hashedPassword: string;
     email: string;
   }) {
     try {
-        const response = await axios.post<{ salt: string; vault: string }>(
-        `${userBase}`,
+        return axios.post<{ salt: string; vault: string }>(
+        `${userBase}/login`,
         payload,
         {
           withCredentials: true,

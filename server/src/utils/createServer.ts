@@ -23,15 +23,15 @@ function createServer(){
         origin: CORS_ORIGIN,
         credentials: true,
     });
-        app.register(jwt, {
-            secret: {
-              private: fs.readFileSync(
-                `${(path.join(process.cwd()), "certs")}/private_key.pem`//cwd returns current working directory for project, private key to verify certificate
-              ),
-              public: fs.readFileSync(
-                `${(path.join(process.cwd()), "certs")}/public_key.pem`// public key to verify certificate
-              ),
-            },
+    app.register(jwt, {
+        secret: {
+          private: fs.readFileSync(
+            `${(path.join(process.cwd()), "certs")}/private_key.pem`//cwd returns current working directory for project, private key to verify certificate
+          ),
+          public: fs.readFileSync(
+            `${(path.join(process.cwd()), "certs")}/public_key.pem`// public key to verify certificate
+          ),
+        },
             sign: { algorithm: "RS256" },
             cookie: {
               cookieName: "token",
@@ -56,8 +56,8 @@ function createServer(){
             }
         }
         );
-    app.register(userRoutes);
-    app.register(vaultRoutes);
+    app.register(userRoutes, { prefix: "api/users"});
+    app.register(vaultRoutes, { prefix: "api/vault"});
     return app;
 
 }

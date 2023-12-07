@@ -13,7 +13,7 @@ export async function registerHandler(request: FastifyRequest<{
     try {
         const user = await createUser(body);
         const salt = generateSalt();
-        const vault = await createVault({user: String(user._id), salt});//Double check this
+        const vault = await createVault({user: user._id.toString(), salt});//Double check this
         const accessToken = await reply.jwtSign({
             _id: user._id,
             email: user.email,

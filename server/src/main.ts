@@ -28,7 +28,6 @@ async function main(){
         await connectToDb();
         logger.flush();
     }catch(error){
-        console.log("Well its been a year")
         logger.error(error);
         logger.flush();
         process.exit(1);
