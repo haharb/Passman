@@ -8,8 +8,8 @@ function userRoutes(
     done: (err?: FastifyError) => void
  ) {
 
-    app.post('/', registerHandler);//Route registered with a prefix of /api/users
-    app.post('/login', loginHandler);//Route registered with a prefix of /api/users/login
+    app.post('/', registerHandler);
+    app.post('/login', loginHandler);
     done();
 
 }

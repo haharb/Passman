@@ -8,14 +8,14 @@ import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import fs from "fs";
-import userRoutes from "../modules/vault/vault.route";
 import vaultRoutes from "../modules/vault/vault.route";
+import userRoutes from "../modules/user/user.route";
 declare module "fastify" {
     export interface FastifyInstance {
       authenticate: any;
     }
   }
-
+//register methods register plugins to be used within an instance of an app, Fastify in this case.
 function createServer(){
     const app = fastify({logger: true,
     });

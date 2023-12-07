@@ -1,9 +1,10 @@
 import { FastifyRequest } from "fastify/types/request";
 import { createUser, findUserByCredentials, generateSalt } from "./user.service";
-import { createVault, getVaultByUser } from "../vault/vault.service";
 import { FastifyReply } from "fastify/types/reply";
-import { COOKIE_DOMAIN } from "../../constants";
+
 import logger from "../../utils/logger";
+import { COOKIE_DOMAIN } from "../../constants";
+import { createVault, getVaultByUser } from "../vault/vault.service";
 export async function registerHandler(request: FastifyRequest<{
     Body: Parameters<typeof createUser>[number];
 }>, reply: FastifyReply)//We use the number as an index to avoid returning an array
