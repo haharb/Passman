@@ -35,80 +35,95 @@ function Vault({ vault = [], vaultKey = ""}: {
             encryptedVault,
           });
         })}
-      >
-        {fields.map((field, index) => {
-            return (
-            <Box mt = "4"
-            mb="4"
-            display = "flex"
-            key={field.id}
-            alignItems="flex-end">
-                <FormControl>
-                    <FormLabel htmlFor="service">
-                        Service
-                    </FormLabel>
-                    <Input
-                        type="url"
-                        id="service"
-                        placeholder="Service Site"
-                        {...register(`vault.${index}.service`, {
-                            required: "The site for the service is required.",
-                        })}
-                            />
-                </FormControl>
-                <FormControl ml="3">
-                    <FormLabel htmlFor="login">
-                        Login
-                    </FormLabel>
-                    <Input
-                        id="login"
-                        placeholder="Login Credential"
-                        {...register(`vault.${index}.login`, {
-                            required: "The login credential is required.",
-                        })}
-                            />
-                </FormControl>
-                <FormControl ml = "3">
-                    <FormLabel htmlFor = "password">
-                        Password
-                    </FormLabel>
-                    <Input
-                        type="passwords"
-                        id="password"
-                        placeholder="Password"
-                        {...register(`vault.${index}.password`, {
-                            required: "The Password is required.",
-                        })}
-                            />
-                </FormControl>
-
-                <Button type="button" 
-                bg="red.500" 
-                color="white"
-                fontSize="2xl"
-                ml="3" 
-                onClick = {() => remove(index)}>
-                -
-                </Button>
-            </Box>
-        );
-    })}
-
-    <Button onClick={() => append({service: "", login: "", password: ""})}
         >
-        Add 
-            </Button>
+            {fields.map((field, index) => {
+                return (
+                <Box mt = "4"
+                mb="4"
+                display = "flex"
+                key={field.id}
+                alignItems="flex-end">
+                    <FormControl>
+                        <FormLabel htmlFor="service">
+                            Service
+                        </FormLabel>
+                        <Input
+                            type="url"
+                            id="service"
+                            placeholder="Service Site"
+                            {...register(`vault.${index}.service`, {
+                                required: "The site for the service is required.",
+                            })}
+                                />
+                    </FormControl>
+                    <FormControl ml="3">
+                        <FormLabel htmlFor="login">
+                            Login
+                        </FormLabel>
+                        <Input
+                            id="login"
+                            placeholder="Login Credential"
+                            {...register(`vault.${index}.login`, {
+                                required: "The login credential is required.",
+                            })}
+                                />
+                    </FormControl>
+                    <FormControl ml = "3">
+                        <FormLabel htmlFor = "password">
+                            Password
+                        </FormLabel>
+                        <Input
+                            type="passwords"
+                            id="password"
+                            placeholder="Password"
+                            {...register(`vault.${index}.password`, {
+                                required: "The Password is required.",
+                            })}
+                                />
+                    </FormControl>
+
+                    <Button type="button" 
+                    bg="red.500" 
+                    color="white"
+                    fontSize="2xl"
+                    ml="3" 
+                    onClick = {() => remove(index)}>
+                    -
+                    </Button>
+                </Box>
+            );
+        })}
+
+        <Button onClick={() => append({service: "", login: "", password: ""})}
+            >
+            Add 
+        </Button>
 
 
-    <Button
-    ml = "8"
-    color = "white"
-    background = "green"
-    type = "submit">
-        Save Vault
-    </Button>
+        <Button
+        ml = "8"
+        color = "white"
+        background = "green"
+        type = "submit">
+                Save Vault
+        </Button>
+
+        <Button onClick={() => [
+            window.sessionStorage.removeItem('accessToken'),//removing access token to end user session
+            window.sessionStorage.removeItem('vk'),
+            window.sessionStorage.removeItem('vault'),
+
+        ]}
+        ml = "8"
+        color = "white"
+        background = "gray"
+        type = "submit">
+                Log Out
+        </Button>
     </FormWrapper>
     );
+
+
 }
 
 export default Vault;
