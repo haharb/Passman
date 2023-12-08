@@ -5,10 +5,10 @@ import styles from '../styles/Home.module.css'
 import {useEffect, useState} from 'react'
 import RegisterForm from '../components/RegisterForm'
 import LoginForm from '../components/LoginForm'
-import Vault from '../components/Vault'
+import Manager from '../components/Manager'
 import { NextPage } from 'next/types'
 
-export interface VaultItem{
+export interface ManagerItem{
   service: string;
   login: string;
   password: string;
@@ -16,21 +16,21 @@ export interface VaultItem{
 const inter = Inter({ subsets: ['latin'] })
 
 const Home: NextPage = () => {
-  const [step, setStep] = useState<'login' | 'register' | 'vault'>('login');
-  const [vault, setVault] = useState<VaultItem[]>([]);
-  const [vaultKey, setVaultKey] = useState("");
+  const [step, setStep] = useState<'login' | 'register' | 'manager'>('login');
+  const [manager, setManager] = useState<ManagerItem[]>([]);
+  const [managerKey, setManagerKey] = useState("");
 
   useEffect(() => {
-    const vault = window.sessionStorage.getItem("vault");
-    const vaultKey = window.sessionStorage.getItem("vault key");
-    if (vault) {
-      setVault(JSON.parse(vault));
+    const manager = window.sessionStorage.getItem("manager");
+    const managerKey = window.sessionStorage.getItem("manager key");
+    if (manager) {
+      setManager(JSON.parse(manager));
     }
-    if (vaultKey){
-      setVaultKey(vaultKey);
-      setStep("vault");
+    if (managerKey){
+      setManagerKey(managerKey);
+      setStep("manager");
     }
-  }, []); //To get vault and vault key from session storage
+  }, []); //To get manager and manager key from session storage
 
   return (
       <div className={styles.container}>
@@ -40,9 +40,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {step === 'register' && <RegisterForm setStep={setStep} setVaultKey={setVaultKey}/>}
-        {step === 'login' && <LoginForm setVault={setVault} setStep={setStep} setVaultKey={setVaultKey} />}
-        {step === 'vault' && <Vault vault={vault}  vaultKey={vaultKey} setStep={setStep}/>}
+        {step === 'register' && <RegisterForm setStep={setStep} setManagerKey={setManagerKey}/>}
+        {step === 'login' && <LoginForm setManager={setManager} setStep={setStep} setManagerKey={setManagerKey} />}
+        {step === 'manager' && <Manager manager={manager}  managerKey={managerKey} setStep={setStep}/>}
       </main>
       </div>
   );

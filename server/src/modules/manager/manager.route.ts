@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { FastifyPluginOptions } from "fastify";
 import { FastifyError } from "fastify";
-import { updateVaultHandler } from "./vault.controller";
-function vaultRoutes(
+import { updateManagerHandler } from "./manager.controller";
+function managerRoutes(
     app: FastifyInstance, 
     _: FastifyPluginOptions, 
     done: (err?: FastifyError) => void
@@ -10,9 +10,9 @@ function vaultRoutes(
     app.put("/", {
         onRequest: [app.authenticate],
     },
-    updateVaultHandler
+    updateManagerHandler
     );
     done();
 
 }
-export default vaultRoutes;
+export default managerRoutes;

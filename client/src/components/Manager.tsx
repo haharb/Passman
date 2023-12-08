@@ -1,39 +1,39 @@
 import { useFieldArray, useForm } from "react-hook-form";
-import { VaultItem } from "../pages";
+import { ManagerItem } from "../pages";
 import FormWrapper from "./FormWrapper";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { encryptVault } from "../crypto";
+import { encryptManager } from "../crypto";
 import { useMutation } from "react-query";
-import { saveVault } from "../api";
+import { saveManager } from "../api";
 import { Dispatch, SetStateAction, useState } from "react";
-function Vault({ vault = [], vaultKey = "", setStep}: {
-    vault: VaultItem[],
-    vaultKey: string,
-    setStep: Dispatch<SetStateAction<"login" | "register" | "vault">>,
+function Manager({ manager = [], managerKey = "", setStep}: {
+    manager: ManagerItem[],
+    managerKey: string,
+    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>,
 }) {
     const {control, register, handleSubmit} = useForm({ 
         defaultValues: {
-            vault, 
+            manager, 
         },
     });
     const {fields, append, remove} = useFieldArray({
         control,
-        name: "vault",
+        name: "manager",
     });
-    const mutation = useMutation(saveVault);
+    const mutation = useMutation(saveManager);
     return (
         <FormWrapper
-        onSubmit={handleSubmit(({ vault }) => {
-          console.log({ vault });
-          const encryptedVault = encryptVault({
-            vault: JSON.stringify({vault}), //Needs the vault property to be stringified, cant't just pass in vault
-            vaultKey,
+        onSubmit={handleSubmit(({ manager }) => {
+          console.log({ manager });
+          const encryptedManager = encryptManager({
+            manager: JSON.stringify({manager}), //Needs the manager property to be stringified, cant't just pass in manager
+            managerKey,
           });
 
-          window.sessionStorage.setItem("vault", JSON.stringify(vault)); //update session storage after saving vault
+          window.sessionStorage.setItem("manager", JSON.stringify(manager)); //update session storage after saving manager
 
           mutation.mutate({
-            encryptedVault,
+            encryptedManager,
           });
         })}
         >
@@ -52,7 +52,7 @@ function Vault({ vault = [], vaultKey = "", setStep}: {
                             type="url"
                             id="service"
                             placeholder="Service Site"
-                            {...register(`vault.${index}.service`, {
+                            {...register(`manager.${index}.service`, {
                                 required: "The site for the service is required.",
                             })}
                                 />
@@ -64,7 +64,7 @@ function Vault({ vault = [], vaultKey = "", setStep}: {
                         <Input
                             id="login"
                             placeholder="Login Credential"
-                            {...register(`vault.${index}.login`, {
+                            {...register(`manager.${index}.login`, {
                                 required: "The login credential is required.",
                             })}
                                 />
@@ -77,7 +77,7 @@ function Vault({ vault = [], vaultKey = "", setStep}: {
                             type="passwords"
                             id="password"
                             placeholder="Password"
-                            {...register(`vault.${index}.password`, {
+                            {...register(`manager.${index}.password`, {
                                 required: "The Password is required.",
                             })}
                                 />
@@ -106,7 +106,7 @@ function Vault({ vault = [], vaultKey = "", setStep}: {
         color = "white"
         background = "green"
         type = "submit">
-                Save Vault
+                Save Manager
         </Button>
         <Button
       onClick={ () =>{
@@ -126,4 +126,4 @@ function Vault({ vault = [], vaultKey = "", setStep}: {
 
 }
 
-export default Vault;
+export default Manager;

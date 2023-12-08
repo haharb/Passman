@@ -1,21 +1,21 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {useForm} from "react-hook-form";
-import { decryptVault, generateVaultKey, hashPassword } from "../crypto";
+import { decryptManager, generateManagerKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { loginUser, registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
-import { VaultItem } from "../pages";
+import { ManagerItem } from "../pages";
 
 export default LoginForm;
 function LoginForm({
-    setVault,
-    setVaultKey,
+    setManager,
+    setManagerKey,
     setStep,
   }: {
-    setVault: Dispatch<SetStateAction<VaultItem[]>>; //Type could be retrieved by hovering over where they are passed down in index.tsx
-    setVaultKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<"login" | "register" | "vault">>;
+    setManager: Dispatch<SetStateAction<ManagerItem[]>>; //Type could be retrieved by hovering over where they are passed down in index.tsx
+    setManagerKey: Dispatch<SetStateAction<string>>;
+    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
     const {
         handleSubmit,
@@ -27,21 +27,21 @@ function LoginForm({
     
 
     const mutation = useMutation(loginUser, {
-        onSuccess: ({salt, vault}) =>{
+        onSuccess: ({salt, manager}) =>{
             const hashedPassword = getValues("hashedPassword");
             const email = getValues("email");
-            const vaultKey = generateVaultKey({
+            const managerKey = generateManagerKey({
                 hashedPassword,
                 email,
                 salt,
             });
         
-            window.sessionStorage.setItem("vk", vaultKey);
-            const decryptedVault = decryptVault({vault, vaultKey});
-            setVaultKey(vaultKey);
-            setVault(decryptedVault);
-            window.sessionStorage.setItem("vault", JSON.stringify(decryptVault));
-            setStep('vault');
+            window.sessionStorage.setItem("vk", managerKey);
+            const decryptedManager = decryptManager({manager, managerKey});
+            setManagerKey(managerKey);
+            setManager(decryptedManager);
+            window.sessionStorage.setItem("manager", JSON.stringify(decryptManager));
+            setStep('manager');
         },
     });
     return (

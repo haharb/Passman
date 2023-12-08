@@ -2,7 +2,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Button } from '@chakra-ui/react';
 
-const LogoutButton = ({ setStep }: { setStep: Dispatch<SetStateAction<'login' | 'register' | 'vault'>> }) => {
+const LogoutButton = ({ setStep }: { setStep: Dispatch<SetStateAction<'login' | 'register' | 'manager'>> }) => {
   const handleLogoutClick = () => {
     setStep('login');
   };

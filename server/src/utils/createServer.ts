@@ -8,7 +8,7 @@ import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import fs from "fs";
-import vaultRoutes from "../modules/vault/vault.route";
+import managerRoutes from "../modules/manager/manager.route";
 import userRoutes from "../modules/user/user.route";
 declare module "fastify" {
     export interface FastifyInstance {
@@ -57,7 +57,7 @@ function createServer(){
         }
         );
     app.register(userRoutes, { prefix: "api/users"});
-    app.register(vaultRoutes, { prefix: "api/vault"});
+    app.register(managerRoutes, { prefix: "api/manager"});
     return app;
 
 }

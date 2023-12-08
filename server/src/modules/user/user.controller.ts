@@ -4,7 +4,7 @@ import { FastifyReply } from "fastify/types/reply";
 
 import logger from "../../utils/logger";
 import { COOKIE_DOMAIN } from "../../constants";
-import { createVault, getVaultByUser } from "../vault/vault.service";
+import { createManager, getManagerByUser } from "../manager/manager.service";
 export async function registerHandler(request: FastifyRequest<{
     Body: Parameters<typeof createUser>[number];
 }>, reply: FastifyReply)//We use the number as an index to avoid returning an array
@@ -14,7 +14,7 @@ export async function registerHandler(request: FastifyRequest<{
     try {
         const user = await createUser(body);
         const salt = generateSalt();
-        const vault = await createVault({user: user._id.toString(), salt});//Double check this
+        const manager = await createManager({user: user._id.toString(), salt});//Double check this
         const accessToken = await reply.jwtSign({
             _id: user._id,
             email: user.email,
@@ -27,7 +27,7 @@ export async function registerHandler(request: FastifyRequest<{
         sameSite: false,
     }); //Matches cookie name when creating the server in createServer.ts
 
-    return reply.code(201).send({accessToken, vault: vault.data, salt});//if successful send the items
+    return reply.code(201).send({accessToken, manager: manager.data, salt});//if successful send the items
     }catch(error){
         logger.error(error, "error creating the user");
         return reply.code(500).send(error);
@@ -43,7 +43,7 @@ export async function loginHandler(request: FastifyRequest<{
             message:"Password/email invalid."
         });
     }
-    const vault = await getVaultByUser(String(user._id));
+    const manager = await getManagerByUser(String(user._id));
     const accessToken = await reply.jwtSign({
         _id: user._id,
         email: user.email,
@@ -55,5 +55,5 @@ export async function loginHandler(request: FastifyRequest<{
         httpOnly: true, //Cookie cant be accessed via javascript; only http
         sameSite: false,
     }); 
-    return reply.code(200).send({accessToken, vault: vault?.data, salt: vault?.salt});//if successful send the items
+    return reply.code(200).send({accessToken, manager: manager?.data, salt: manager?.salt});//if successful send the items
 }

@@ -1,18 +1,18 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {useForm} from "react-hook-form";
-import { generateVaultKey, hashPassword } from "../crypto";
+import { generateManagerKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
-import { VaultItem } from "../pages";
+import { ManagerItem } from "../pages";
 
 function RegisterForm({
-    setVaultKey,
+    setManagerKey,
     setStep,
   }: {
-    setVaultKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<"login" | "register" | "vault">>;
+    setManagerKey: Dispatch<SetStateAction<string>>;
+    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
     const {
         handleSubmit,
@@ -24,19 +24,19 @@ function RegisterForm({
     
 
     const mutation = useMutation(registerUser, {
-        onSuccess: ({salt, vault}) =>{
+        onSuccess: ({salt, manager}) =>{
             const hashedPassword = getValues("hashedPassword");
             const email = getValues("email");
-            const vaultKey = generateVaultKey({
+            const managerKey = generateManagerKey({
                 hashedPassword,
                 email,
                 salt,
             });
         
-            window.sessionStorage.setItem("vk", vaultKey);
-            setVaultKey(vaultKey);
-            window.sessionStorage.setItem("vault", "");
-            setStep('vault');
+            window.sessionStorage.setItem("vk", managerKey);
+            setManagerKey(managerKey);
+            window.sessionStorage.setItem("manager", "");
+            setStep('manager');
         },
 
     });
