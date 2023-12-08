@@ -5,13 +5,13 @@ import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { encryptVault } from "../crypto";
 import { useMutation } from "react-query";
 import { saveVault } from "../api";
-import { useRouter } from "next/router";
-import { Dispatch, SetStateAction } from "react";
-function Vault({ vault = [], vaultKey = ""}: {
+import { Dispatch, SetStateAction, useState } from "react";
+function Vault({ vault = [], vaultKey = "", setStep}: {
     vault: VaultItem[],
     vaultKey: string,
+    setStep: Dispatch<SetStateAction<"login" | "register" | "vault">>,
 }) {
-    const {control, register, handleSubmit} = useForm({
+    const {control, register, handleSubmit} = useForm({ 
         defaultValues: {
             vault, 
         },
@@ -108,21 +108,18 @@ function Vault({ vault = [], vaultKey = ""}: {
         type = "submit">
                 Save Vault
         </Button>
-
-        <Button onClick={() => {
-            
-            window.sessionStorage.removeItem('accessToken');//removing access token to end user session
-            window.sessionStorage.removeItem('vk');
-            window.sessionStorage.removeItem('vault');
-            router.push('/login');
-;
-        }}
-        ml = "8"
-        color = "white"
-        background = "gray"
-        type = "submit">
-                Log Out
-        </Button>
+        <Button
+      onClick={ () =>{
+        setStep('login');
+      }
+      }
+      ml="8"
+      color="white"
+      background="gray"
+      type="submit"
+    >
+      Log Out
+    </Button>
     </FormWrapper>
     );
 

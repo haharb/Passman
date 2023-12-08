@@ -16,7 +16,7 @@ export interface VaultItem{
 const inter = Inter({ subsets: ['latin'] })
 
 const Home: NextPage = () => {
-  const [step, setStep] = useState<'login' | 'register' | 'vault'>('register');
+  const [step, setStep] = useState<'login' | 'register' | 'vault'>('login');
   const [vault, setVault] = useState<VaultItem[]>([]);
   const [vaultKey, setVaultKey] = useState("");
 
@@ -42,7 +42,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         {step === 'register' && <RegisterForm setStep={setStep} setVaultKey={setVaultKey}/>}
         {step === 'login' && <LoginForm setVault={setVault} setStep={setStep} setVaultKey={setVaultKey} />}
-        {step === 'vault' && <Vault vault={vault} vaultKey={vaultKey}/>}
+        {step === 'vault' && <Vault vault={vault}  vaultKey={vaultKey} setStep={setStep}/>}
       </main>
       </div>
   );

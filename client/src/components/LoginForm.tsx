@@ -43,7 +43,6 @@ function LoginForm({
             window.sessionStorage.setItem("vault", JSON.stringify(decryptVault));
             setStep('vault');
         },
-
     });
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
@@ -87,7 +86,7 @@ function LoginForm({
             })}
             />
             <FormErrorMessage>
-                {errors.email && errors.email.message}
+                {errors.password && errors.password.message}
             </FormErrorMessage>
         </FormControl>
        <Button type = "submit">
