@@ -5,7 +5,8 @@ import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { encryptVault } from "../crypto";
 import { useMutation } from "react-query";
 import { saveVault } from "../api";
-
+import { useRouter } from "next/router";
+import { Dispatch, SetStateAction } from "react";
 function Vault({ vault = [], vaultKey = ""}: {
     vault: VaultItem[],
     vaultKey: string,
@@ -108,12 +109,14 @@ function Vault({ vault = [], vaultKey = ""}: {
                 Save Vault
         </Button>
 
-        <Button onClick={() => [
-            window.sessionStorage.removeItem('accessToken'),//removing access token to end user session
-            window.sessionStorage.removeItem('vk'),
-            window.sessionStorage.removeItem('vault'),
-
-        ]}
+        <Button onClick={() => {
+            
+            window.sessionStorage.removeItem('accessToken');//removing access token to end user session
+            window.sessionStorage.removeItem('vk');
+            window.sessionStorage.removeItem('vault');
+            router.push('/login');
+;
+        }}
         ml = "8"
         color = "white"
         background = "gray"
