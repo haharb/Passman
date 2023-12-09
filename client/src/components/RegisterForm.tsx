@@ -14,6 +14,7 @@ function RegisterForm({
     setManagerKey: Dispatch<SetStateAction<string>>;
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
+    window.sessionStorage.clear();
     const [replyCode, setReplyCode] = useState<number | null>(null);
     const {
         handleSubmit,

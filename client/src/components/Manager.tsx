@@ -12,11 +12,12 @@ function Manager({ manager = [], managerKey = "", setStep}: {
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>,
 }) {
     const [isSaved, setIsSaved] = useState(false); // State for managing the saved message
-    const {control, register, handleSubmit} = useForm({ 
+    const { control, register, handleSubmit, reset } = useForm({
         defaultValues: {
-            manager, 
+          manager: manager && manager.length > 0 ? manager : [{ service: "", login: "", password: "" }],
         },
-    });
+      });
+      
     const {fields, append, remove} = useFieldArray({
         control,
         name: "manager",
@@ -113,6 +114,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
         </Button>
         <Button
             onClick={ () =>{
+                reset();
                 window.sessionStorage.clear();
                 setStep('login');
             }
