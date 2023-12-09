@@ -24,9 +24,15 @@ const Home: NextPage = () => {
     const manager = window.sessionStorage.getItem("manager");
     const managerKey = window.sessionStorage.getItem("manager key");
     if (manager) {
-      setManager(JSON.parse(manager));
+      try {
+        const parsedManager = JSON.parse(manager);
+        setManager(parsedManager);
+      } catch (error) {
+        console.error("Error parsing manager JSON:", error);
+      }
     }
-    if (managerKey){
+    
+    if (managerKey) {
       setManagerKey(managerKey);
       setStep("manager");
     }
