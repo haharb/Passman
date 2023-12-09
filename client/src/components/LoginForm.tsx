@@ -6,7 +6,7 @@ import { useMutation } from "react-query";
 import { loginUser, registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
 import { ManagerItem } from "../pages";
-
+import { useState } from 'react';
 export default LoginForm;
 function LoginForm({
     setManager,
@@ -17,22 +17,23 @@ function LoginForm({
     setManagerKey: Dispatch<SetStateAction<string>>;
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
+    const [replyCode, setReplyCode] = useState<number | null>(null);
     const {
         handleSubmit,
         register,
         getValues,
         setValue,
         formState: { errors, isSubmitting },
-      } = useForm<{ email: string; password: string; hashedPassword: string }>();
+      } = useForm<{ username: string; password: string; hashedPassword: string }>();
     
 
     const mutation = useMutation(loginUser, {
         onSuccess: ({salt, manager}) =>{
             const hashedPassword = getValues("hashedPassword");
-            const email = getValues("email");
+            const username = getValues("username");
             const managerKey = generateManagerKey({
                 hashedPassword,
-                email,
+                username,
                 salt,
             });
         
@@ -41,35 +42,39 @@ function LoginForm({
             setManagerKey(managerKey);
             setManager(decryptedManager);
             window.sessionStorage.setItem("manager", JSON.stringify(decryptManager));
-            setStep('manager');
+            setStep('manager'); 
         },
+        onError: (error) => {
+            console.error("Login failed:", error);
+            setReplyCode(null); // If null then there was an error logging in
+            },
     });
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
-        const email = getValues('email');
+        const username = getValues('username');
         const password = getValues('password');
         const hashedPassword = hashPassword(password);
         setValue("hashedPassword", hashedPassword);
         mutation.mutate({
-            email,
+            username,
             hashedPassword,
         });
     })}>
         <Heading>Login</Heading>
         <FormControl mt="4">
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="username">Username</FormLabel>
             <Input 
-            id="email"
-            placeholder = "Email"
-            {...register("email", {
-                required: "Email is required",
+            id="username"
+            placeholder = "Username"
+            {...register("username", {
+                required: "Username is required",
                 minLength: {
                     value: 4,
-                    message: 'Email must be at least 4 characters long.'},
+                    message: 'Username must be at least 4 characters long.'},
             })}
             />
             <FormErrorMessage>
-                {errors.email && errors.email.message}
+                {errors.username && errors.username.message}
             </FormErrorMessage>
         </FormControl>
         <FormControl mt="4">
@@ -85,6 +90,7 @@ function LoginForm({
                         message: "Password must be at least 6 characters long."},
             })}
             />
+        
             <FormErrorMessage>
                 {errors.password && errors.password.message}
             </FormErrorMessage>
@@ -92,6 +98,24 @@ function LoginForm({
        <Button type = "submit">
             Login
        </Button>
+       <div
+        onClick={() => {
+            setStep('register');
+        }}
+        style={{
+            marginLeft: '8px',
+            color: 'gray',
+            padding: '10px',
+            cursor: 'pointer',
+        }}
+    >
+       New user? Click here to register instead.
+    </div>
+    {replyCode !== null && (
+  <div>
+    Login failed. Invalid username or password.
+  </div>
+)}
     </FormWrapper>
 );
 }

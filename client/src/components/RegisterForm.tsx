@@ -6,7 +6,7 @@ import { useMutation } from "react-query";
 import { registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
 import { ManagerItem } from "../pages";
-
+import { useState } from 'react';
 function RegisterForm({
     setManagerKey,
     setStep,
@@ -14,22 +14,23 @@ function RegisterForm({
     setManagerKey: Dispatch<SetStateAction<string>>;
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
+    const [replyCode, setReplyCode] = useState<number | null>(null);
     const {
         handleSubmit,
         register,
         getValues,
         setValue,
         formState: { errors, isSubmitting },
-      } = useForm<{ email: string; password: string; hashedPassword: string }>();
+      } = useForm<{ username: string; password: string; hashedPassword: string }>();
     
 
     const mutation = useMutation(registerUser, {
         onSuccess: ({salt, manager}) =>{
             const hashedPassword = getValues("hashedPassword");
-            const email = getValues("email");
+            const username = getValues("username");
             const managerKey = generateManagerKey({
                 hashedPassword,
-                email,
+                username,
                 salt,
             });
         
@@ -37,35 +38,36 @@ function RegisterForm({
             setManagerKey(managerKey);
             window.sessionStorage.setItem("manager", "");
             setStep('manager');
+            setReplyCode(replyCode);
         },
 
     });
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
-        const email = getValues('email');
+        const username = getValues('username');
         const password = getValues('password');
         const hashedPassword = hashPassword(password);
         setValue("hashedPassword", hashedPassword);
         mutation.mutate({
-            email,
+            username,
             hashedPassword,
         });
     })}>
         <Heading>Register</Heading>
         <FormControl mt="4">
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="username">Username</FormLabel>
             <Input 
-            id="email"
-            placeholder = "Email"
-            {...register("email", {
-                required: "Email is required",
+            id="username"
+            placeholder = "Username"
+            {...register("username", {
+                required: "Username is required",
                 minLength: {
                     value: 4,
-                    message: 'Email must be at least 4 characters long.'},
+                    message: 'Username must be at least 4 characters long.'},
             })}
             />
             <FormErrorMessage>
-                {errors.email && errors.email.message}
+                {errors.username && errors.username.message}
             </FormErrorMessage>
         </FormControl>
         <FormControl mt="4">
@@ -82,12 +84,36 @@ function RegisterForm({
             })}
             />
             <FormErrorMessage>
-                {errors.email && errors.email.message}
+                {errors.username && errors.username.message}
             </FormErrorMessage>
         </FormControl>
        <Button type = "submit">
             Register
        </Button>
+       <div
+            onClick={() => {
+                setStep('login');
+            }}
+            style={{
+                marginLeft: '8px',
+                color: 'gray',
+                padding: '10px',
+                cursor: 'pointer',
+            }}
+        >
+            Already a user? Click here to login instead.
+        </div>
+        {replyCode === 1100 && (
+            <div 
+            style={{
+                marginLeft: '16px',
+                color: 'gray',
+                padding: '10px',
+                cursor: 'pointer',
+            }}>
+                User is already registered. Please either login or use a different username.
+            </div>
+            )}
     </FormWrapper>
 );
 }

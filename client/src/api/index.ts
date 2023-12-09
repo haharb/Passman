@@ -5,7 +5,7 @@ const managerBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/manager`;
 
 export function registerUser(payload: {
     hashedPassword: string;
-    email: string;
+    username: string;
   }) {
     try {
         return axios.post<{ salt: string; manager: string }>(
@@ -22,7 +22,7 @@ export function registerUser(payload: {
   }
   export function loginUser(payload: {
     hashedPassword: string;
-    email: string;
+    username: string;
   }) {
     try {
         return axios.post<{ salt: string; manager: string }>(

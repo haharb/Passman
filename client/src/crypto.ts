@@ -7,13 +7,13 @@ export function hashPassword(password: string){
 
 export function generateManagerKey({
     hashedPassword,
-    email,
+    username,
     salt,}:{
         hashedPassword: string;
-        email: string;
+        username: string;
         salt: string;
 }){
-    return pbkdf2(`${email}:${hashedPassword}`, salt, {
+    return pbkdf2(`${username}:${hashedPassword}`, salt, {
         keySize: 32,
       }).toString();
 }

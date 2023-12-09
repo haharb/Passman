@@ -11,6 +11,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
     managerKey: string,
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>,
 }) {
+    const [isSaved, setIsSaved] = useState(false); // State for managing the saved message
     const {control, register, handleSubmit} = useForm({ 
         defaultValues: {
             manager, 
@@ -20,6 +21,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
         control,
         name: "manager",
     });
+    
     const mutation = useMutation(saveManager);
     return (
         <FormWrapper
@@ -35,6 +37,8 @@ function Manager({ manager = [], managerKey = "", setStep}: {
           mutation.mutate({
             encryptedManager,
           });
+          setIsSaved(true); // Set the state to indicate that the data has been saved
+          setTimeout(() => setIsSaved(false), 3000); // Hide the message after 3 seconds
         })}
         >
             {fields.map((field, index) => {
@@ -49,11 +53,10 @@ function Manager({ manager = [], managerKey = "", setStep}: {
                             Service
                         </FormLabel>
                         <Input
-                            type="url"
                             id="service"
-                            placeholder="Service Site"
+                            placeholder="Service"
                             {...register(`manager.${index}.service`, {
-                                required: "The site for the service is required.",
+                                required: "The service is required.",
                             })}
                                 />
                     </FormControl>
@@ -102,24 +105,35 @@ function Manager({ manager = [], managerKey = "", setStep}: {
 
 
         <Button
-        ml = "8"
-        color = "white"
-        background = "green"
-        type = "submit">
-                Save Manager
+            ml = "8"
+            color = "white"
+            background = "green"
+            type = "submit">
+                Save
         </Button>
         <Button
-      onClick={ () =>{
-        setStep('login');
-      }
-      }
-      ml="8"
-      color="white"
-      background="gray"
-      type="submit"
-    >
-      Log Out
+            onClick={ () =>{
+                window.sessionStorage.clear();
+                setStep('login');
+            }
+            }
+            ml="8"
+            color="white"
+            background="gray"
+            type="submit"
+            >
+                Log Out
     </Button>
+    <div
+            style={{
+                marginLeft: '8px',
+                color: isSaved ? 'gray' : "transparent",
+                padding: '10px',
+                cursor: 'pointer',
+            }}
+        >
+            Changes saved to the database.
+        </div>
     </FormWrapper>
     );
 
