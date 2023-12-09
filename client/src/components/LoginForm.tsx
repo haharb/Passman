@@ -17,7 +17,7 @@ function LoginForm({
     setManagerKey: Dispatch<SetStateAction<string>>;
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
-    const [replyCode, setReplyCode] = useState<number | null>(null);
+    const [replyCode, setReplyCode] = useState<number | null>(1);
     const {
         handleSubmit,
         register,
@@ -90,7 +90,6 @@ function LoginForm({
                         message: "Password must be at least 6 characters long."},
             })}
             />
-        
             <FormErrorMessage>
                 {errors.password && errors.password.message}
             </FormErrorMessage>
@@ -98,6 +97,16 @@ function LoginForm({
        <Button type = "submit">
             Login
        </Button>
+       {replyCode === null && (
+        <div
+        style={{
+            marginLeft: '8px',
+            color: 'red',
+            padding: '10px',
+        }}>
+            Login failed. Invalid username or password.
+        </div>
+        )}
        <div
         onClick={() => {
             setStep('register');
@@ -111,11 +120,7 @@ function LoginForm({
     >
        New user? Click here to register instead.
     </div>
-    {replyCode !== null && (
-  <div>
-    Login failed. Invalid username or password.
-  </div>
-)}
+    
     </FormWrapper>
 );
 }

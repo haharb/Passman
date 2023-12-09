@@ -120,7 +120,6 @@ function Manager({ manager = [], managerKey = "", setStep}: {
             ml="8"
             color="white"
             background="gray"
-            type="submit"
             >
                 Log Out
     </Button>

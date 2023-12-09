@@ -103,17 +103,17 @@ function RegisterForm({
         >
             Already a user? Click here to login instead.
         </div>
-        {replyCode === 1100 && (
-            <div 
-            style={{
-                marginLeft: '16px',
-                color: 'gray',
-                padding: '10px',
-                cursor: 'pointer',
-            }}>
-                User is already registered. Please either login or use a different username.
-            </div>
-            )}
+        {replyCode ===1100 && (
+        <div
+        style={{
+            marginLeft: '8px',
+            color: 'red',
+            padding: '10px',
+            cursor: 'pointer',
+        }}>
+            User already exists. Register with a different username or login.
+        </div>
+        )}
     </FormWrapper>
 );
 }
