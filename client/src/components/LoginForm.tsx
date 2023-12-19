@@ -37,7 +37,7 @@ function LoginForm({
                 salt,
             });
         
-            window.sessionStorage.setItem("vk", managerKey);
+            window.sessionStorage.setItem("managerkey", managerKey);
             const decryptedManager = decryptManager({manager, managerKey});
             setManagerKey(managerKey);
             setManager(decryptedManager);

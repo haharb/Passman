@@ -27,8 +27,13 @@ hashedPassword}: {
     ){
         const user = await UserModel.findOne({username});
         const hash = await generateHash(hashedPassword) ;
-        if(!user || !argon2.verify(user.password, hash)){
+        if(!user)
+        {
             return null;
         }
-        return user;
+        else if(await argon2.verify(user.password, hash))
+        {
+            return user;
+        }
+        return null;
     }

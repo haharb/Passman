@@ -35,7 +35,7 @@ function RegisterForm({
                 salt,
             });
         
-            window.sessionStorage.setItem("vk", managerKey);
+            window.sessionStorage.setItem("managerkey", managerKey);
             setManagerKey(managerKey);
             window.sessionStorage.setItem("manager", "");
             setStep('manager');

@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const manager = window.sessionStorage.getItem("manager");
-    const managerKey = window.sessionStorage.getItem("manager key");
+    const managerKey = window.sessionStorage.getItem("managerkey");
     if (manager) {
       setManager(JSON.parse(manager));
     }
