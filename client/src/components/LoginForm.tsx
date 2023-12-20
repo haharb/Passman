@@ -120,7 +120,18 @@ function LoginForm({
     >
        New user? Click here to register instead.
     </div>
-    
+    {getValues('password') && getValues('password').length < 6 && (
+          <div
+            style={{
+              marginLeft: '8px',
+              color: 'red',
+              padding: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            Password must be at least 6 characters long.
+          </div>
+        )}
     </FormWrapper>
 );
 }
