@@ -15,7 +15,6 @@ function RegisterForm({
     setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
   }) {
     window.sessionStorage.clear();
-    const [replyCode, setReplyCode] = useState<number | null>(null);
     const {
         handleSubmit,
         register,
@@ -23,7 +22,7 @@ function RegisterForm({
         setValue,
         formState: { errors, isSubmitting },
       } = useForm<{ username: string; password: string; hashedPassword: string }>();
-    
+      const [replyCode, setReplyCode] = useState<number | null>(null);
 
     const mutation = useMutation(registerUser, {
         onSuccess: ({salt, manager}) =>{
@@ -39,10 +38,23 @@ function RegisterForm({
             setManagerKey(managerKey);
             window.sessionStorage.setItem("manager", "");
             setStep('manager');
-            setReplyCode(replyCode);
         },
-
+        onError: (error: any) => {
+            console.error("Registration failed:", error);
+        
+            // Check if the error contains the replyCode information
+            const replyCode = error?.response?.data?.code; // Adjust the property path based on API response structure
+        
+            if (replyCode) {
+              setReplyCode(replyCode);
+            } else {
+              // Handle the case where replyCode is not available in the error
+              console.error("Unable to extract replyCode from the error.");
+            }
+          },
     });
+    //const isUsernameValid = getValues('username') && getValues('username').length >= 4;
+    //const isPasswordValid = getValues('password') && getValues('password').length >= 6;
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
         const username = getValues('username');
@@ -56,6 +68,7 @@ function RegisterForm({
     })}>
         <Heading>Register</Heading>
         <FormControl mt="4">
+
             <FormLabel htmlFor="username">Username</FormLabel>
             <Input 
             id="username"
@@ -67,6 +80,18 @@ function RegisterForm({
                     message: 'Username must be at least 4 characters long.'},
             })}
             />
+            {getValues('username') && getValues('username').length < 4 && (
+          <div
+            style={{
+              marginLeft: '8px',
+              color: 'red',
+              padding: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            Username must be at least 4 characters long.
+          </div>
+        )}
             <FormErrorMessage>
                 {errors.username && errors.username.message}
             </FormErrorMessage>
@@ -84,8 +109,20 @@ function RegisterForm({
                         message: "Password must be at least 6 characters long."},
             })}
             />
+            {getValues('password') && getValues('password').length < 6 && (
+          <div
+            style={{
+              marginLeft: '8px',
+              color: 'red',
+              padding: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            Password must be at least 6 characters long.
+          </div>
+        )}
             <FormErrorMessage>
-                {errors.username && errors.username.message}
+                {errors.password && errors.password.message}
             </FormErrorMessage>
         </FormControl>
        <Button type = "submit">
@@ -104,6 +141,9 @@ function RegisterForm({
         >
             Already a user? Click here to login instead.
         </div>
+        <div>
+        <p>{replyCode}</p>
+        </div>
         {replyCode ===1100 && (
         <div
         style={{
@@ -115,7 +155,9 @@ function RegisterForm({
             User already exists. Register with a different username or login.
         </div>
         )}
+
     </FormWrapper>
+    
 );
 }
 

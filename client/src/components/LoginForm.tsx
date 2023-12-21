@@ -49,6 +49,8 @@ function LoginForm({
             setReplyCode(null); // If null then there was an error logging in
             },
     });
+    const isUsernameValid = getValues('username');
+    const isPasswordValid = getValues('password');
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
         const username = getValues('username');
@@ -68,9 +70,6 @@ function LoginForm({
             placeholder = "Username"
             {...register("username", {
                 required: "Username is required",
-                minLength: {
-                    value: 4,
-                    message: 'Username must be at least 4 characters long.'},
             })}
             />
             <FormErrorMessage>
@@ -85,9 +84,6 @@ function LoginForm({
                 type="password"
                 {...register("password", {
                     required: "A password is required",
-                    minLength: {
-                        value: 6, 
-                        message: "Password must be at least 6 characters long."},
             })}
             />
             <FormErrorMessage>
@@ -120,18 +116,6 @@ function LoginForm({
     >
        New user? Click here to register instead.
     </div>
-    {getValues('password') && getValues('password').length < 6 && (
-          <div
-            style={{
-              marginLeft: '8px',
-              color: 'red',
-              padding: '10px',
-              cursor: 'pointer',
-            }}
-          >
-            Password must be at least 6 characters long.
-          </div>
-        )}
     </FormWrapper>
 );
 }
