@@ -141,10 +141,7 @@ function RegisterForm({
         >
             Already a user? Click here to login instead.
         </div>
-        <div>
-        <p>{replyCode}</p>
-        </div>
-        {replyCode ===1100 && (
+        {replyCode ==11000 && (
         <div
         style={{
             marginLeft: '8px',
@@ -152,9 +149,10 @@ function RegisterForm({
             padding: '10px',
             cursor: 'pointer',
         }}>
-            User already exists. Register with a different username or login.
+            User already exists. Register with a different username or login instead.
         </div>
         )}
+        
 
     </FormWrapper>
     

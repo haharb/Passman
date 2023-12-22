@@ -1,3 +1,12 @@
+
+1. Make sure you have the dependencies installed using the commands from Packages.md
+2. Navigate to the server directory within the command line interface
+3. Run the yarn dev command to start the server
+4. Navigate to the client directory the same way 
+5. Run the client side using the yarn dev command as well
+6. The default clientside server will be started on localhost port 3000: http://localhost:3000
+7. 
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
