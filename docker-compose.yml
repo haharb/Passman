@@ -11,6 +11,7 @@ services:
       - '4000:4000'
     environment:
       - DB_CONNECTION_STRING=mongodb://mongo:27017/mydatabase
+      - NEXT_PUBLIC_API_ENDPOINT=localhost:3000
     depends_on:
       - mongo
 

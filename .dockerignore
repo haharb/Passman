@@ -1,0 +1,5 @@
+node_modules
+.next
+docker-compose.yml
+Dockerfile
+Dockerfile.dev
