@@ -2,7 +2,7 @@ import pbkdf2 from "crypto-js/pbkdf2";
 import { AES, SHA256, enc } from "crypto-js";
 
 export function hashPassword(password: string){
-    return SHA256("password").toString();
+    return SHA256(password).toString();
 }
 
 export function generateManagerKey({
