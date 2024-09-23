@@ -1,11 +1,41 @@
+Stack:
 
-1. Make sure you have the dependencies installed using the commands from Packages.md
+    Next.js web development framework
+    React.js for the front end 
+
+    Node.js runtime environment
+
+    Fastify for the web framework due to it having little overhead and powerful plugins
+
+    TypeScript used as the programming language
+
+    algorithms used:
+    - aes256 for encrypting and decrypting the manager's data
+    - pbkdf2 which is a pseudorandom hash algorithm similar to hmac, that takes in a salt and generates a locker key 
+    - argon2 for unpredictable password hashing for the database
+
+
+Data flow:
+
+- User registers/logs in and the password and username and password are sent over HTTPS to server
+if registering:
+    The server then hashes the password with argon2, creates the user and salt for the locker, and then creates the locker itself
+otherwise
+    - The server then retrieves the user from the database with the username and compares the hash values, then retrieves the locker data for that specific user, and sends back the encrypted locker, the locker's salt
+- User will then generate their own locker key using their username hashed password and locker salt, and the pbkdf2 function.
+- Then will decrypt the locker with its key using AES 
+- Make any changes to the manager data, save the data, and then encrypt the manager again with the key and send it back.
+- Finally, the access token is checked by the server which then saves the received encrypted manager.
+
+
+
+To setup:
+1. Make sure you have the dependencies installed using the commands from Packages.md (or running docker for development)
 2. Navigate to the server directory within the command line interface
 3. Run the yarn dev command to start the server
 4. Navigate to the client directory the same way 
 5. Run the client side using the yarn dev command as well
 6. The default clientside server will be started on localhost port 3000: http://localhost:3000
-7. 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

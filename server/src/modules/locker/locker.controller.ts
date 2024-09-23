@@ -19,6 +19,6 @@ reply: FastifyReply)
         return reply.code(200).send("Locker has been updated");
     }catch(error){
         logger.error(error, "There was an error when updating the locker.");
-        return reply.code(500).send(error);//Could be improved with better status codes and tests.
+        return reply.code(500).send(error);
     }
 }

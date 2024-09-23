@@ -6,12 +6,15 @@ import { encryptLocker } from "../crypto";
 import { useMutation } from "react-query";
 import { saveLocker } from "../api";
 import { Dispatch, SetStateAction, useState } from "react";
-function Locker({ locker = [], lockerKey = "", setStep}: {
+
+
+export default function Locker({ locker = [], lockerKey = "", setStep}: {
     locker: LockerItem[],
     lockerKey: string,
     setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>,
 }) {
     const [isSaved, setIsSaved] = useState(false); // State for managing the saved message
+
     const { control, register, handleSubmit, reset } = useForm({
         defaultValues: {
           locker: locker && locker.length > 0 ? locker : [{ service: "", login: "", password: "" }],
@@ -24,10 +27,13 @@ function Locker({ locker = [], lockerKey = "", setStep}: {
     });
     
     const mutation = useMutation(saveLocker);
+
     return (
         <FormWrapper
         onSubmit={handleSubmit(({ locker }) => {
+
           console.log({ locker });
+
           const encryptedLocker = encryptLocker({
             locker: JSON.stringify({locker}), //Needs the locker property to be stringified, cant't just pass in locker
             lockerKey,
@@ -38,6 +44,7 @@ function Locker({ locker = [], lockerKey = "", setStep}: {
           mutation.mutate({
             encryptedLocker,
           });
+
           setIsSaved(true); // Set the state to indicate that the data has been saved
           setTimeout(() => setIsSaved(false), 3000); // Hide the message after 3 seconds
         })}
@@ -140,5 +147,3 @@ function Locker({ locker = [], lockerKey = "", setStep}: {
 
 
 }
-
-export default Locker;

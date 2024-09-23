@@ -1,10 +1,11 @@
 import pbkdf2 from "crypto-js/pbkdf2";
 import { AES, SHA256, enc } from "crypto-js";
-
+/*
+// No need to hash password on clientside when using https
 export function hashPassword(password: string){
     return SHA256(password).toString();
 }
-
+*/
 export function generateLockerKey({
     password,
     username,
@@ -26,8 +27,8 @@ export function encryptLocker({lockerKey, locker}: {
 }
 
 export function decryptLocker({locker, lockerKey}: {
-        lockerKey: string;
-        locker: string;
+    locker: string;
+    lockerKey: string;
 }) {
         const bytes = AES.decrypt(locker, lockerKey); //Data is returned as raw binary data (bytes)
         const plaintext = bytes.toString(enc.Utf8); //Needs to be converted to string with UTF-8 encoding

@@ -4,7 +4,8 @@ import argon2 from "argon2";
 
 @pre<User>("save", async function (next) {
     if(this.isModified('password') || this.isNew){
-        const hash = await argon2.hash(`${this.username}:${this.password}`); // hashing username and password for added security
+
+        const hash = await argon2.hash(this.password);
 
         this.password = hash;
         return next();

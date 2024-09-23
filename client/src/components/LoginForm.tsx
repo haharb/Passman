@@ -1,128 +1,132 @@
-import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
+import {Button, FormControl, FormErrorMessage,FormLabel, Heading, Input} from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
-import {useForm} from "react-hook-form";
-import { decryptLocker, generateLockerKey, hashPassword } from "../crypto";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { decryptLocker, generateLockerKey } from "../crypto";
 import { useMutation } from "react-query";
-import { loginUser, registerUser } from "../api";
+import { loginUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
 import { LockerItem } from "../pages";
-import { useState } from 'react';
+
+interface LoginFormValues {
+    username: string;
+    password: string;
+}
+
+interface LoginFormProps {
+    setLocker: Dispatch<SetStateAction<LockerItem[]>>;
+    setLockerKey: Dispatch<SetStateAction<string>>;
+    setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>;
+}
 
 export default function LoginForm({
     setLocker,
     setLockerKey,
     setStep,
-  }: {
-    setLocker: Dispatch<SetStateAction<LockerItem[]>>; 
-    setLockerKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>;
-  }) {
-    const [replyCode, setReplyCode] = useState<number | null>(1);
-
+}: LoginFormProps) {
     const {
         handleSubmit,
         register,
         getValues,
         formState: { errors, isSubmitting },
-      } = useForm<{ username: string; password: string; hashedPassword: string }>();
-    
+    } = useForm<LoginFormValues>();
 
     const mutation = useMutation(loginUser, {
-        //Notes: Calls loginUser and allows for the handling of results
-        onSuccess: async ({salt, locker}) =>{
-            
+        onSuccess: ({ salt, locker }) => {
             const username = getValues("username");
-
             const password = getValues("password");
 
+            // Generate locker key using password, username, and salt
             const lockerKey = generateLockerKey({
-                password,
                 username,
+                password,
                 salt,
             });
-        
-            
-            const decryptedLocker = decryptLocker({locker, lockerKey});
+
+            const decryptedLocker = decryptLocker({ locker, lockerKey });
             setLockerKey(lockerKey);
             setLocker(decryptedLocker);
 
-            window.sessionStorage.setItem("locker", JSON.stringify(decryptedLocker));
+            // TODO: change this to prevent XSS
+            window.sessionStorage.setItem("locker", decryptedLocker);
 
-            setStep('locker'); 
+            setStep("locker");
         },
-        onError: (error) => {
+        onError: (error: any) => {
             console.error("Login failed:", error);
-            setReplyCode(null); // If null then there was an error logging in
-            },
+        },
     });
 
+    const onSubmit: SubmitHandler<LoginFormValues> = async () => {
+        const username = getValues("username");
+        const password = getValues("password");
+
+        try {
+            await mutation.mutateAsync({password, username});
+        } catch (error) {
+            //TODO: add error logging
+        }
+    };
+
     return (
-    <FormWrapper onSubmit={handleSubmit(() => {
-
-        const username = getValues('username');
-        const password = getValues('password');
-        
-        //Mutate and call the loginUser method
-        mutation.mutateAsync({
-            username,
-            password,
-        });
-
-    })}>
-        <Heading>Login</Heading>
-        <FormControl mt="4">
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <Input 
-            id="username"
-            placeholder = "Username"
-            {...register("username", {
-                required: "Username is required",
-            })}
-            />
-            <FormErrorMessage>
-                {errors.username && errors.username.message}
-            </FormErrorMessage>
-        </FormControl>
-        <FormControl mt="4">
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <Input 
-                id="password" 
-                placeholder = "Password"
-                type="password"
-                {...register("password", {
-                    required: "A password is required",
-            })}
-            />
-            <FormErrorMessage>
-                {errors.password && errors.password.message}
-            </FormErrorMessage>
-        </FormControl>
-       <Button type = "submit">
-            Login
-       </Button>
-       {replyCode === null && (
-        <div
-        style={{
-            marginLeft: '8px',
-            color: 'red',
-            padding: '10px',
-        }}>
-            Login failed. Invalid username or password.
-        </div>
-        )}
-       <div
-        onClick={() => {
-            setStep('register');
-        }}
-        style={{
-            marginLeft: '8px',
-            color: 'gray',
-            padding: '10px',
-            cursor: 'pointer',
-        }}
-    >
-       New user? Click here to register instead.
-    </div>
-    </FormWrapper>
-);
+        <FormWrapper onSubmit={handleSubmit(onSubmit)}>
+            <Heading>Login</Heading>
+            <FormControl mt="4" isInvalid={!!errors.username}>
+                <FormLabel htmlFor="username">Username</FormLabel>
+                <Input
+                    id="username"
+                    placeholder="Username"
+                    {...register("username", {
+                        required: "Username is required",
+                    })}
+                />
+                <FormErrorMessage>
+                    {errors.username && errors.username.message}
+                </FormErrorMessage>
+            </FormControl>
+            <FormControl mt="4" isInvalid={!!errors.password}>
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <Input
+                    id="password"
+                    placeholder="Password"
+                    type="password"
+                    {...register("password", {
+                        required: "A password is required",
+                    })}
+                />
+                <FormErrorMessage>
+                    {errors.password && errors.password.message}
+                </FormErrorMessage>
+            </FormControl>
+            <Button
+                type="submit"
+                mt="4"
+                colorScheme="teal"
+                isLoading={mutation.isLoading || isSubmitting}
+            >
+                Login
+            </Button>
+            {mutation.isError && (
+                <div
+                    style={{
+                        marginLeft: "8px",
+                        color: "red",
+                        padding: "10px",
+                    }}
+                >
+                    Login failed. Invalid username or password.
+                </div>
+            )}
+            <div
+                onClick={() => setStep("register")}
+                style={{
+                    marginLeft: "8px",
+                    color: "gray",
+                    padding: "10px",
+                    cursor: "pointer",
+                }}
+            >
+                New user? Click here to register instead.
+            </div>
+        </FormWrapper>
+    );
 }

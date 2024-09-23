@@ -18,14 +18,16 @@ export async function registerHandler(request: FastifyRequest<{
         const user = await createUser(body);
         const salt = generateSalt();
         const locker = await createLocker({user: user._id.toString(), salt});//Double check this
+
         const accessToken = await reply.jwtSign({
             _id: user._id,
             username: user.username,
     });
+
     reply.setCookie("token", accessToken, {
         domain: COOKIE_DOMAIN,
         path : "/",
-        secure: false, //If set to true, ensures that cookies are only sent through https connections
+        secure: true, //If set to true, ensures that cookies are only sent through https connections
         httpOnly: true, //Cookie cant be accessed via javascript; only http
         sameSite: false,
     }); //Matches cookie name when creating the server in createServer.ts
@@ -41,17 +43,22 @@ export async function registerHandler(request: FastifyRequest<{
 export async function loginHandler(request: FastifyRequest<{
     Body: Parameters<typeof createUser>[number];
 }>, reply: FastifyReply){
+
     const user = await findUserByCredentials(request.body);
+
     if (!user){
         return reply.status(401).send({
             message:"Password/username invalid."
         });
     }
+
     const locker = await getLockerByUser(String(user._id));
+
     const accessToken = await reply.jwtSign({
         _id: user._id,
         username: user.username,
     });
+
     reply.setCookie("token", accessToken, {
         domain: COOKIE_DOMAIN,
         path : "/",

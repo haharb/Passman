@@ -4,8 +4,8 @@ const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
 const lockerBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/locker`;
 
 export async function registerUser(payload: {
-  password: string;
   username: string;
+  password: string;
 }): Promise<{ salt: string; locker: string }> {
   try {
       const response = await axios.post<{ salt: string; locker: string }>(
@@ -23,8 +23,8 @@ export async function registerUser(payload: {
 }
 
 export async function loginUser(payload: {
-  password: string;
   username: string;
+  password: string;
 }): Promise<{ salt: string; locker: string }> {
   try {
       const response = await axios.post<{ salt: string; locker: string }>(
@@ -42,18 +42,12 @@ export async function loginUser(payload: {
 }
 
 
-  //NOTES:{ encryptedLocker }: 
-  //This is destructuring.
-  //Instead of receiving an entire object and then accessing its encryptedLocker property inside the function,
-  // you're directly extracting encryptedLocker from the passed object.
   export async function saveLocker(
     {encryptedLocker}:{
     encryptedLocker: string
   })
   {
-    //NOTES: { encryptedLocker } is short hand for an object that 
-    //has the same name as the property { encryptedLocker }
-    //{ withCredentials: true } is a config object for axios that indicates to use cookies
+
     const res = await axios.put(lockerBase, { encryptedLocker }, { withCredentials: true });
     return res.data;
   }

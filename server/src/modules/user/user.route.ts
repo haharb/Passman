@@ -10,7 +10,9 @@ function userRoutes(
  ) {
 
     app.post('/', registerHandler);
+
     app.post('/login', loginHandler);
+    
     done();
 
 }

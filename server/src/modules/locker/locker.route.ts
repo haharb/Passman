@@ -4,7 +4,7 @@ import { FastifyError } from "fastify";
 import { updateLockerHandler } from "./locker.controller";
 
 
-function lockerRoutes(
+export default function lockerRoutes(
     app: FastifyInstance, 
     _: FastifyPluginOptions, 
     done: (err?: FastifyError) => void
@@ -17,4 +17,3 @@ function lockerRoutes(
     done();
 
 }
-export default lockerRoutes;
