@@ -1,42 +1,42 @@
 import { useFieldArray, useForm } from "react-hook-form";
-import { ManagerItem } from "../pages";
+import { LockerItem } from "../pages";
 import FormWrapper from "./FormWrapper";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { encryptManager } from "../crypto";
+import { encryptLocker } from "../crypto";
 import { useMutation } from "react-query";
-import { saveManager } from "../api";
+import { saveLocker } from "../api";
 import { Dispatch, SetStateAction, useState } from "react";
-function Manager({ manager = [], managerKey = "", setStep}: {
-    manager: ManagerItem[],
-    managerKey: string,
-    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>,
+function Locker({ locker = [], lockerKey = "", setStep}: {
+    locker: LockerItem[],
+    lockerKey: string,
+    setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>,
 }) {
     const [isSaved, setIsSaved] = useState(false); // State for managing the saved message
     const { control, register, handleSubmit, reset } = useForm({
         defaultValues: {
-          manager: manager && manager.length > 0 ? manager : [{ service: "", login: "", password: "" }],
+          locker: locker && locker.length > 0 ? locker : [{ service: "", login: "", password: "" }],
         },
       });
       
     const {fields, append, remove} = useFieldArray({
         control,
-        name: "manager",
+        name: "locker",
     });
     
-    const mutation = useMutation(saveManager);
+    const mutation = useMutation(saveLocker);
     return (
         <FormWrapper
-        onSubmit={handleSubmit(({ manager }) => {
-          console.log({ manager });
-          const encryptedManager = encryptManager({
-            manager: JSON.stringify({manager}), //Needs the manager property to be stringified, cant't just pass in manager
-            managerKey,
+        onSubmit={handleSubmit(({ locker }) => {
+          console.log({ locker });
+          const encryptedLocker = encryptLocker({
+            locker: JSON.stringify({locker}), //Needs the locker property to be stringified, cant't just pass in locker
+            lockerKey,
           });
 
-          window.sessionStorage.setItem("manager", JSON.stringify(manager)); //update session storage after saving manager
+          window.sessionStorage.setItem("locker", JSON.stringify(locker)); //update session storage after saving locker
 
           mutation.mutate({
-            encryptedManager,
+            encryptedLocker,
           });
           setIsSaved(true); // Set the state to indicate that the data has been saved
           setTimeout(() => setIsSaved(false), 3000); // Hide the message after 3 seconds
@@ -56,7 +56,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
                         <Input
                             id="service"
                             placeholder="Service"
-                            {...register(`manager.${index}.service`, {
+                            {...register(`locker.${index}.service`, {
                                 required: "The service is required.",
                             })}
                                 />
@@ -68,7 +68,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
                         <Input
                             id="login"
                             placeholder="Login Credential"
-                            {...register(`manager.${index}.login`, {
+                            {...register(`locker.${index}.login`, {
                                 required: "The login credential is required.",
                             })}
                                 />
@@ -81,7 +81,7 @@ function Manager({ manager = [], managerKey = "", setStep}: {
                             type="passwords"
                             id="password"
                             placeholder="Password"
-                            {...register(`manager.${index}.password`, {
+                            {...register(`locker.${index}.password`, {
                                 required: "The Password is required.",
                             })}
                                 />
@@ -141,4 +141,4 @@ function Manager({ manager = [], managerKey = "", setStep}: {
 
 }
 
-export default Manager;
+export default Locker;

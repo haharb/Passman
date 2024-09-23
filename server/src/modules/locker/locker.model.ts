@@ -1,6 +1,6 @@
 import {getModelForClass, prop, Ref} from "@typegoose/typegoose";
 import { User } from "../user/user.model";
-export class Manager{
+export class Locker{
     @prop({required: true, ref: () => User})
     user: Ref<User>
 
@@ -11,7 +11,7 @@ export class Manager{
     salt: string;
 }
 
-export const ManagerModel = getModelForClass(Manager, {
+export const LockerModel = getModelForClass(Locker, {
     schemaOptions: {
         timestamps: true,
     },

@@ -1,66 +1,73 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {useForm} from "react-hook-form";
-import { decryptManager, generateManagerKey, hashPassword } from "../crypto";
+import { decryptLocker, generateLockerKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { loginUser, registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
-import { ManagerItem } from "../pages";
+import { LockerItem } from "../pages";
 import { useState } from 'react';
-export default LoginForm;
-function LoginForm({
-    setManager,
-    setManagerKey,
+
+export default function LoginForm({
+    setLocker,
+    setLockerKey,
     setStep,
   }: {
-    setManager: Dispatch<SetStateAction<ManagerItem[]>>; //Type could be retrieved by hovering over where they are passed down in index.tsx
-    setManagerKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
+    setLocker: Dispatch<SetStateAction<LockerItem[]>>; 
+    setLockerKey: Dispatch<SetStateAction<string>>;
+    setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>;
   }) {
     const [replyCode, setReplyCode] = useState<number | null>(1);
+
     const {
         handleSubmit,
         register,
         getValues,
-        setValue,
         formState: { errors, isSubmitting },
       } = useForm<{ username: string; password: string; hashedPassword: string }>();
     
 
     const mutation = useMutation(loginUser, {
-        onSuccess: ({salt, manager}) =>{
-            const hashedPassword = getValues("hashedPassword");
+        //Notes: Calls loginUser and allows for the handling of results
+        onSuccess: async ({salt, locker}) =>{
+            
             const username = getValues("username");
-            const managerKey = generateManagerKey({
-                hashedPassword,
+
+            const password = getValues("password");
+
+            const lockerKey = generateLockerKey({
+                password,
                 username,
                 salt,
             });
         
-            window.sessionStorage.setItem("managerkey", managerKey);
-            const decryptedManager = decryptManager({manager, managerKey});
-            setManagerKey(managerKey);
-            setManager(decryptedManager);
-            window.sessionStorage.setItem("manager", JSON.stringify(decryptManager));
-            setStep('manager'); 
+            
+            const decryptedLocker = decryptLocker({locker, lockerKey});
+            setLockerKey(lockerKey);
+            setLocker(decryptedLocker);
+
+            window.sessionStorage.setItem("locker", JSON.stringify(decryptedLocker));
+
+            setStep('locker'); 
         },
         onError: (error) => {
             console.error("Login failed:", error);
             setReplyCode(null); // If null then there was an error logging in
             },
     });
-    const isUsernameValid = getValues('username');
-    const isPasswordValid = getValues('password');
+
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
+
         const username = getValues('username');
         const password = getValues('password');
-        const hashedPassword = hashPassword(password);
-        setValue("hashedPassword", hashedPassword);
-        mutation.mutate({
+        
+        //Mutate and call the loginUser method
+        mutation.mutateAsync({
             username,
-            hashedPassword,
+            password,
         });
+
     })}>
         <Heading>Login</Heading>
         <FormControl mt="4">

@@ -8,8 +8,11 @@ import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import fs from "fs";
-import managerRoutes from "../modules/manager/manager.route";
+import managerRoutes from "../modules/locker/locker.route";
 import userRoutes from "../modules/user/user.route";
+
+//NOTES: Includes an extra module called authenticate 
+//from FastifyInstance (extends ) to authenticate jwt (jsonwebtokens)
 declare module "fastify" {
     export interface FastifyInstance {
       authenticate: any;
@@ -17,12 +20,14 @@ declare module "fastify" {
   }
 //register methods register plugins to be used within an instance of an app, Fastify in this case.
 function createServer(){
-    const app = fastify({logger: true,
-    });
+    const app = fastify({logger: true});
+    //NOTES: Where the client ip is registered to enable communication
     app.register(cors, {
         origin: CORS_ORIGIN,
         credentials: true,
     });
+
+
     app.register(jwt, {
         secret: {
           private: fs.readFileSync(
@@ -34,10 +39,13 @@ function createServer(){
         },
             sign: { algorithm: "RS256" },
             cookie: {
+              // Sign cookie for extra security
               cookieName: "token",
-              signed: false,
+              signed: true,
             },
           });
+
+
     app.register(cookie, {
         parseOptions: {},
         });
@@ -52,12 +60,15 @@ function createServer(){
     
             request.user = user;
             } catch (error) {
-            return reply.send(error);
+              return reply.send(error);
             }
         }
         );
+
     app.register(userRoutes, { prefix: "api/users"});
+
     app.register(managerRoutes, { prefix: "api/manager"});
+
     return app;
 
 }

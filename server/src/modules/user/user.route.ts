@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { FastifyPluginOptions } from "fastify";
 import { FastifyError } from "fastify";
 import { loginHandler, registerHandler } from "./user.controller";
+
 function userRoutes(
     app: FastifyInstance, 
     _: FastifyPluginOptions, 

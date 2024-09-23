@@ -1,47 +1,59 @@
 import axios from "axios"; //for making http requests
 //const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
 const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
-const managerBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/manager`;
+const lockerBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/locker`;
 
-export function registerUser(payload: {
-    hashedPassword: string;
-    username: string;
-  }) {
-    try {
-        return axios.post<{ salt: string; manager: string }>(
-        userBase,
-        payload,
-        {
-          withCredentials: true,
-        }
-      ).then((res) => res.data);
-    } catch (error) {
+export async function registerUser(payload: {
+  password: string;
+  username: string;
+}): Promise<{ salt: string; locker: string }> {
+  try {
+      const response = await axios.post<{ salt: string; locker: string }>(
+          userBase,
+          payload,
+          {
+              withCredentials: true,
+          }
+      );
+      return response.data;
+  } catch (error) {
       console.error('Error registering user:', error);
       throw error;  
-    }
   }
-  export function loginUser(payload: {
-    hashedPassword: string;
-    username: string;
-  }) {
-    try {
-        return axios.post<{ salt: string; manager: string }>(
-        `${userBase}/login`,
-        payload,
-        {
-          withCredentials: true,
-        }
-      ).then((res) => res.data);
-    } catch (error) {
+}
+
+export async function loginUser(payload: {
+  password: string;
+  username: string;
+}): Promise<{ salt: string; locker: string }> {
+  try {
+      const response = await axios.post<{ salt: string; locker: string }>(
+          `${userBase}/login`,
+          payload,
+          {
+              withCredentials: true,
+          }
+      );
+      return response.data;
+  } catch (error) {
       console.error('Error logging in:', error);
       throw error;  
-    }
   }
-  export async function saveManager(
-    {encryptedManager}:{
-    encryptedManager: string
+}
+
+
+  //NOTES:{ encryptedLocker }: 
+  //This is destructuring.
+  //Instead of receiving an entire object and then accessing its encryptedLocker property inside the function,
+  // you're directly extracting encryptedLocker from the passed object.
+  export async function saveLocker(
+    {encryptedLocker}:{
+    encryptedLocker: string
   })
   {
-    const res = await axios.put(managerBase, { encryptedManager }, { withCredentials: true });
+    //NOTES: { encryptedLocker } is short hand for an object that 
+    //has the same name as the property { encryptedLocker }
+    //{ withCredentials: true } is a config object for axios that indicates to use cookies
+    const res = await axios.put(lockerBase, { encryptedLocker }, { withCredentials: true });
     return res.data;
   }

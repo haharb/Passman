@@ -1,43 +1,54 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {useForm} from "react-hook-form";
-import { generateManagerKey, hashPassword } from "../crypto";
+import { generateLockerKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { registerUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
-import { ManagerItem } from "../pages";
+import { LockerItem } from "../pages";
 import { useState } from 'react';
-function RegisterForm({
-    setManagerKey,
+
+
+export default function RegisterForm({
+    setLockerKey,
     setStep,
   }: {
-    setManagerKey: Dispatch<SetStateAction<string>>;
-    setStep: Dispatch<SetStateAction<"login" | "register" | "manager">>;
+    setLockerKey: Dispatch<SetStateAction<string>>;
+    setStep: Dispatch<SetStateAction<"login" | "register" | "locker">>;
   }) {
+
+    // Clear the storage to ensure fresh start 
     window.sessionStorage.clear();
+    
+    //NOTES: Using useForm from react hook form that help with form submission and validation
     const {
         handleSubmit,
         register,
         getValues,
-        setValue,
         formState: { errors, isSubmitting },
       } = useForm<{ username: string; password: string; hashedPassword: string }>();
-      const [replyCode, setReplyCode] = useState<number | null>(null);
 
+
+    const [replyCode, setReplyCode] = useState<number | null>(null);
+
+
+    //NOTES: useMutation from React Query which is used for creating updating or deleting data (POST, PUT, DELETE)
     const mutation = useMutation(registerUser, {
-        onSuccess: ({salt, manager}) =>{
-            const hashedPassword = getValues("hashedPassword");
+        onSuccess: ({salt, locker}) =>{
             const username = getValues("username");
-            const managerKey = generateManagerKey({
-                hashedPassword,
+            const password = getValues("password");
+
+            const lockerKey = generateLockerKey({
+                password,
                 username,
                 salt,
             });
         
-            window.sessionStorage.setItem("managerkey", managerKey);
-            setManagerKey(managerKey);
-            window.sessionStorage.setItem("manager", "");
-            setStep('manager');
+            window.sessionStorage.setItem("lockerkey", lockerKey);
+            setLockerKey(lockerKey);
+
+            window.sessionStorage.setItem("locker", locker);
+            setStep('locker');
         },
         onError: (error: any) => {
             console.error("Registration failed:", error);
@@ -53,17 +64,17 @@ function RegisterForm({
             }
           },
     });
-    //const isUsernameValid = getValues('username') && getValues('username').length >= 4;
-    //const isPasswordValid = getValues('password') && getValues('password').length >= 6;
+
+
     return (
     <FormWrapper onSubmit={handleSubmit(() => {
+      
         const username = getValues('username');
         const password = getValues('password');
-        const hashedPassword = hashPassword(password);
-        setValue("hashedPassword", hashedPassword);
+        
         mutation.mutate({
             username,
-            hashedPassword,
+            password,
         });
     })}>
         <Heading>Register</Heading>
@@ -125,6 +136,8 @@ function RegisterForm({
                 {errors.password && errors.password.message}
             </FormErrorMessage>
         </FormControl>
+
+
        <Button type = "submit">
             Register
        </Button>
@@ -158,6 +171,3 @@ function RegisterForm({
     
 );
 }
-
-
-export default RegisterForm;

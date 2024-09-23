@@ -5,34 +5,34 @@ export function hashPassword(password: string){
     return SHA256(password).toString();
 }
 
-export function generateManagerKey({
-    hashedPassword,
+export function generateLockerKey({
+    password,
     username,
-    salt,}:{
-        hashedPassword: string;
+    salt }:{
+        password: string;
         username: string;
         salt: string;
 }){
-    return pbkdf2(`${username}:${hashedPassword}`, salt, {
+    return pbkdf2(`${username}:${password}`, salt, {
         keySize: 32,
       }).toString();
 }
 
-export function encryptManager({managerKey, manager}: {
-    managerKey: string;
-    manager: string;
+export function encryptLocker({lockerKey, locker}: {
+    lockerKey: string;
+    locker: string;
 }){
-    return AES.encrypt(manager, managerKey).toString();//Encrypting the manager and its key with aes256 encryption algorithm
+    return AES.encrypt(locker, lockerKey).toString();//Encrypting the locker and its key with aes256 encryption algorithm
 }
 
-export function decryptManager({manager, managerKey}: {
-        managerKey: string;
-        manager: string;
+export function decryptLocker({locker, lockerKey}: {
+        lockerKey: string;
+        locker: string;
 }) {
-        const bytes = AES.decrypt(manager, managerKey); //Data is returned as raw binary data (bytes)
+        const bytes = AES.decrypt(locker, lockerKey); //Data is returned as raw binary data (bytes)
         const plaintext = bytes.toString(enc.Utf8); //Needs to be converted to string with UTF-8 encoding
     try{
-        return JSON.parse(plaintext).manager;
+        return JSON.parse(plaintext).locker;
     }catch(error){
         return null;
     }

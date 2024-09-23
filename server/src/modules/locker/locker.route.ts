@@ -1,8 +1,10 @@
 import { FastifyInstance } from "fastify";
 import { FastifyPluginOptions } from "fastify";
 import { FastifyError } from "fastify";
-import { updateManagerHandler } from "./manager.controller";
-function managerRoutes(
+import { updateLockerHandler } from "./locker.controller";
+
+
+function lockerRoutes(
     app: FastifyInstance, 
     _: FastifyPluginOptions, 
     done: (err?: FastifyError) => void
@@ -10,9 +12,9 @@ function managerRoutes(
     app.put("/", {
         onRequest: [app.authenticate],
     },
-    updateManagerHandler
+    updateLockerHandler
     );
     done();
 
 }
-export default managerRoutes;
+export default lockerRoutes;

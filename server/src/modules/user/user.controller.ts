@@ -4,18 +4,20 @@ import { FastifyReply } from "fastify/types/reply";
 
 import logger from "../../utils/logger";
 import { COOKIE_DOMAIN } from "../../constants";
-import { createManager, getManagerByUser } from "../manager/manager.service";
+import { createLocker, getLockerByUser } from "../locker/locker.service";
 import { Document, Model, Error as MongooseError } from 'mongoose';
+
+
 export async function registerHandler(request: FastifyRequest<{
     Body: Parameters<typeof createUser>[number];
-}>, reply: FastifyReply)//We use the number as an index to avoid returning an array
+}>, reply: FastifyReply)// The number is used as an index to avoid returning an array
 {
     const body = request.body;
 
     try {
         const user = await createUser(body);
         const salt = generateSalt();
-        const manager = await createManager({user: user._id.toString(), salt});//Double check this
+        const locker = await createLocker({user: user._id.toString(), salt});//Double check this
         const accessToken = await reply.jwtSign({
             _id: user._id,
             username: user.username,
@@ -28,12 +30,14 @@ export async function registerHandler(request: FastifyRequest<{
         sameSite: false,
     }); //Matches cookie name when creating the server in createServer.ts
 
-    return reply.code(201).send({accessToken, manager: manager.data, salt});//if successful send the items
+    return reply.code(201).send({accessToken, locker: locker.data, salt});//if successful send the items
 }catch(error){
     logger.error(error, "error creating the user");
     return reply.code(500).send(error);
 }
 }
+
+//Handles logins through the /api/users/login endpoint
 export async function loginHandler(request: FastifyRequest<{
     Body: Parameters<typeof createUser>[number];
 }>, reply: FastifyReply){
@@ -43,7 +47,7 @@ export async function loginHandler(request: FastifyRequest<{
             message:"Password/username invalid."
         });
     }
-    const manager = await getManagerByUser(String(user._id));
+    const locker = await getLockerByUser(String(user._id));
     const accessToken = await reply.jwtSign({
         _id: user._id,
         username: user.username,
@@ -55,5 +59,5 @@ export async function loginHandler(request: FastifyRequest<{
         httpOnly: true, //Cookie cant be accessed via javascript; only http
         sameSite: false,
     }); 
-    return reply.code(200).send({accessToken, manager: manager?.data, salt: manager?.salt});//if successful send the items
+    return reply.code(200).send({accessToken, locker: locker?.data, salt: locker?.salt});//if successful send the items
 }
