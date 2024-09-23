@@ -7,9 +7,10 @@ import { FastifyRequest } from "fastify";
 import { FastifyReply } from "fastify";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
-import fs from "fs";
+import { readFileSync, existsSync } from "fs";
 import lockerRoutes from "../modules/locker/locker.route";
 import userRoutes from "../modules/user/user.route";
+import logger from "./logger";
 
 
 declare module "fastify" {
@@ -33,8 +34,16 @@ export default function createServer(){
 
     const publicKeyPath = path.join(process.cwd(), "certs", "public_key.pem");
 
-    const privateKey = fs.readFileSync(privateKeyPath);
-    const publicKey = fs.readFileSync(publicKeyPath);
+    if (!existsSync(privateKeyPath)) {
+      throw new Error(`Private key file not found at path: ${privateKeyPath}`);
+    }
+    
+    if (!existsSync(publicKeyPath)) {
+      throw new Error(`Public key file not found at path: ${publicKeyPath}`);
+    }
+    
+    const privateKey = readFileSync(privateKeyPath);
+    const publicKey = readFileSync(publicKeyPath);
 
     app.register(jwt, {
         secret: {
@@ -53,17 +62,20 @@ export default function createServer(){
       parseOptions: {},
       });
    
+    // Authenticate is a decorator function that handles verifying jwt tokens
     app.decorate(
         "authenticate",
         async (request: FastifyRequest, reply: FastifyReply) => {
             try {
               const user = await request.jwtVerify<{
                   _id: string;
+                  username: string;
               }>();
     
               request.user = user;
             } catch (error) {
-              return reply.send(error);
+              logger.error(`Authentication failed: ${(error as Error).message}`);
+              reply.code(401).send({ message: "Unauthorized" });
             }
         }
         );

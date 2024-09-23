@@ -13,7 +13,7 @@ function dbShutDown(signal: string, app: FastifyInstance){// Shuts down db grace
         logger.info('Done');
         setTimeout(() => {
             process.exit(0);
-        }, 1000); // Delay the process exit for 1 second (adjust as needed).
+        }, 1000); // Delay the process exit for 1 second.
     });
 }
 console.log("Main test");

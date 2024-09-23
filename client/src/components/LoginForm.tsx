@@ -46,7 +46,7 @@ export default function LoginForm({
             setLockerKey(lockerKey);
             setLocker(decryptedLocker);
 
-            // TODO: change this to prevent XSS
+            // TODO: check for risk of XSS
             window.sessionStorage.setItem("locker", decryptedLocker);
 
             setStep("locker");
@@ -111,8 +111,7 @@ export default function LoginForm({
                         marginLeft: "8px",
                         color: "red",
                         padding: "10px",
-                    }}
-                >
+                    }}>
                     Login failed. Invalid username or password.
                 </div>
             )}

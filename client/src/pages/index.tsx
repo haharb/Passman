@@ -16,13 +16,18 @@ export interface LockerItem{
 const inter = Inter({ subsets: ['latin'] })
 
 const Home: NextPage = () => {
+  //Set represents the current stage of the page (login, register, or locker)
   const [step, setStep] = useState<'login' | 'register' | 'locker'>('login');
+  //To store and update a list of users and passwords retrieved from the db
   const [locker, setLocker] = useState<LockerItem[]>([]);
+  //To storea and update the lockerKey generated 
   const [lockerKey, setLockerKey] = useState("");
 
   useEffect(() => {
-    const locker = window.sessionStorage.getItem("locker");
+
     const lockerKey = window.sessionStorage.getItem("lockerkey");
+    const locker = window.sessionStorage.getItem("locker");
+
     if (locker) {
       try {
         const parsedLocker = JSON.parse(locker);
@@ -32,11 +37,11 @@ const Home: NextPage = () => {
       }
     }
     
+    //If there is a locker key present in storage then switch to the locker page
     if (lockerKey) {
       setLockerKey(lockerKey);
-      setStep("locker");
-    }
-  }, []); //To get locker and locker key from session storage
+      setStep("locker");}},
+      []); //To get locker and locker key from session storage
 
   return (
       <div className={`${styles.container} ${inter.className}`}>
