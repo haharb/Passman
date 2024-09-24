@@ -9,7 +9,7 @@ export default function userRoutes(
     done: (err?: FastifyError) => void
  ) {
 
-    app.post('/register', registerHandler);
+    app.post('/', registerHandler);
 
     app.post('/login', loginHandler);
 

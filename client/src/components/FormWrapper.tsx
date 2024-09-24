@@ -4,7 +4,7 @@ function FormWrapper({
     children,
     ...props
 }: {children: React.ReactNode} & BoxProps) {
-    return ( <Box w= "100%" maxW ="containter.sm" boxShadow = "xl" as = 'form' {...props}>
+    return ( <Box w= "100%" maxW ="containter.sm" boxShadow = "x2" as = 'form' {...props}>
         {children}
         </Box>
     );
