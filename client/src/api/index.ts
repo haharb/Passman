@@ -1,5 +1,5 @@
-import axios from "axios"; //for making http requests
-//const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
+import axios from "axios";
+
 const userBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
 const lockerBase = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/locker`;
 
@@ -8,17 +8,17 @@ export async function registerUser(payload: {
   password: string;
 }): Promise<{ salt: string; locker: string }> {
   try {
-      const response = await axios.post<{ salt: string; locker: string }>(
-          userBase,
-          payload,
-          {
-              withCredentials: true,
-          }
-      );
-      return response.data;
+    const response = await axios.post<{ salt: string; locker: string }>(
+      userBase,
+      payload,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
   } catch (error) {
-      console.error('Error registering user:', error);
-      throw error;  
+    console.error("Error registering user:", error);
+    throw error;
   }
 }
 
@@ -27,27 +27,30 @@ export async function loginUser(payload: {
   password: string;
 }): Promise<{ salt: string; locker: string }> {
   try {
-      const response = await axios.post<{ salt: string; locker: string }>(
-          `${userBase}/login`,
-          payload,
-          {
-              withCredentials: true,
-          }
-      );
-      return response.data;
+    const response = await axios.post<{ salt: string; locker: string }>(
+      `${userBase}/login`,
+      payload,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
   } catch (error) {
-      console.error('Error logging in:', error);
-      throw error;  
+    console.error("Error logging in:", error);
+    throw error;
   }
 }
 
-
-  export async function saveLocker(
-    {encryptedLocker}:{
-    encryptedLocker: string
-  })
-  {
-
+export async function saveLocker({
+  encryptedLocker,
+}: {
+  encryptedLocker: string;
+}) {
+  try {
     const res = await axios.put(lockerBase, { encryptedLocker }, { withCredentials: true });
     return res.data;
+  } catch (error) {
+    console.error("Error saving locker:", error);
+    throw error;
   }
+}
