@@ -18,17 +18,17 @@ export async function registerHandler(
     try {
         const user = await createUser(body);
         const salt = generateSalt();
-        const locker = await createLocker({user: user._id.toString(), salt});
+        const locker = await createLocker({user: user.id, salt});
 
         const accessToken = await reply.jwtSign({
-            _id: user._id,
+            id: user.id,
             username: user.username,
     });
 
     reply.setCookie("token", accessToken, {
         domain: COOKIE_DOMAIN,
         path : "/",
-        secure: true, //If set to true, ensures that cookies are only sent through https connections
+        secure: false, //If set to true, ensures that cookies are only sent through https connections
         httpOnly: true, //Cookie cant be accessed via javascript; only http
         sameSite: false,
     }); //Matches cookie name when creating the server in createServer.ts
@@ -54,21 +54,19 @@ export async function loginHandler(request: FastifyRequest<{
             });
         }
     
-        const locker = await getLockerByUser(String(user._id));
+        const locker = await getLockerByUser(user.id.toString());
     
-        //Digitally sign the token with a lifetime of 1 hour
+        //Digitally sign the token 
         const accessToken = await reply.jwtSign(
-                {id: user._id, username: user.username},
-                {expiresIn: '1h'}
+                {id: user.id.toString(), username: user.username},
             );
     
         reply.setCookie("token", accessToken, {
             domain: COOKIE_DOMAIN,
             path : "/",
-            secure: true, //Only accept https connections
+            secure: false, //Only accept https connections
             httpOnly: true, //Cookie cant be accessed via javascript; only http
             sameSite: false, //Would need to change in production mode
-            maxAge: 3600, //Lifetime of cookie in seconds
         }); 
         return reply.code(200).send({accessToken, locker: locker?.data, salt: locker?.salt});//if successful send the items
     } catch(error: any){

@@ -4,31 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "type": "node",
+            "type": "chrome",
             "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}\\client\\src\\components\\LoginForm.tsx",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
             
-        }, 
-        {
-            "name": "Attach to Next.js Server",
-            "type": "node",
-            "request": "attach",
-            "address": "localhost",
-            "port": 9229,
-            "localRoot": "${workspaceFolder}/client",
-            "remoteRoot": "/app",
-            "restart": true,
-            "sourceMaps": true,
-            "outFiles": ["${workspaceFolder}/client/.next/**/*.js"]
-          }
+        }
     ]
 }

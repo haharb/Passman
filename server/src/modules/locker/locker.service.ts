@@ -7,7 +7,7 @@ export function updateLocker({
     userId,
     data,
 }: {
-    userId?: string;
+    userId: string;
     data: string;
 }) {
     return LockerModel.updateOne({user: userId}, {data});

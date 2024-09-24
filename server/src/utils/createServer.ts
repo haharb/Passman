@@ -12,7 +12,7 @@ import lockerRoutes from "../modules/locker/locker.route";
 import userRoutes from "../modules/user/user.route";
 import logger from "./logger";
 
-
+//Extend fastify to include a custom authenticate function
 declare module "fastify" {
     export interface FastifyInstance {
       authenticate: any;
@@ -21,15 +21,19 @@ declare module "fastify" {
 
 //register methods register plugins to be used within an instance of an app, Fastify in this case.
 export default function createServer(){
+
+    
     const app = fastify({logger: true});
 
+    //CORS middleware allows for restricting to certain domains/origins,
+    // credentials:true allows for cookies to be sent
     app.register(cors, {
         origin: CORS_ORIGIN,
         credentials: true,
     });
 
 
-
+    //Ensure that the private and public keys exist before grabbing them
     const privateKeyPath = path.join(process.cwd(), "certs", "private_key.pem");
 
     const publicKeyPath = path.join(process.cwd(), "certs", "public_key.pem");
@@ -45,6 +49,7 @@ export default function createServer(){
     const privateKey = readFileSync(privateKeyPath);
     const publicKey = readFileSync(publicKeyPath);
 
+    //JWT plugin to sign/verify tokens
     app.register(jwt, {
         secret: {
           private: privateKey,
@@ -57,19 +62,18 @@ export default function createServer(){
             },
           });
 
-
+    //Cookie plugin allows for handling cookies
     app.register(cookie, {
       parseOptions: {},
       });
    
-    // Authenticate is a decorator function that handles verifying jwt tokens
+    // Authenticate is a decorator function that handles verifying jwt tokens within the request
     app.decorate(
         "authenticate",
         async (request: FastifyRequest, reply: FastifyReply) => {
             try {
               const user = await request.jwtVerify<{
-                  _id: string;
-                  username: string;
+                  id: string;
               }>();
     
               request.user = user;

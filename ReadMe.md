@@ -17,7 +17,7 @@ Stack:
 
 Data flow:
 
-- User registers/logs in and the password and username and password are sent over HTTPS to server
+- User registers/logs in and the password and username and password hashed with SHA256 are sent over HTTPS to server
 if registering:
     The server then hashes the password with argon2, creates the user and salt for the locker, and then creates the locker itself
 otherwise

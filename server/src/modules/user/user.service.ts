@@ -3,12 +3,12 @@ import { UserModel } from "./user.model";
 import crypto from "crypto";
 
 export async function createUser(input: {
-    password: string;
+    hashedPassword: string;
     username: string;
 }){
     return UserModel.create({
         username: input.username,
-        password: input.password,
+        password: input.hashedPassword,
     });
 
 }
@@ -18,17 +18,22 @@ export function generateSalt(){
     return crypto.randomBytes(64).toString("hex");//Random hex string of length 64 bytes is returned for the salt
 }
 
+async function getHash(password: string) {
+    return argon2.hash(password);
+  }
+
 // Gets user if the user exists and the hashed credentials match
 export async function findUserByCredentials({username,
-password}: {
+hashedPassword}: {
     username: string;
-    password: string;
+    hashedPassword: string;
 }
     ){
         const user = await UserModel.findOne({username});
-        if (user && await argon2.verify(user.password, password))
+        const digest = await getHash(hashedPassword);
+        if (!user || await argon2.verify(user.password, digest))
         {
-            return user;
+            return null;
         }
-        return null;
+        return user;
     }

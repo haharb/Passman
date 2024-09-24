@@ -1,19 +1,25 @@
 import pbkdf2 from "crypto-js/pbkdf2";
 import { AES, SHA256, enc } from "crypto-js";
 
+
+
 export function generateLockerKey({
-    password,
     username,
+    hashedPassword,
     salt }:{
-        password: string;
         username: string;
+        hashedPassword: string;
         salt: string;
 }){
-    return pbkdf2(`${username}:${password}`, salt, {
+    return pbkdf2(`${username}:${hashedPassword}`, salt, {
         keySize: 32,
       }).toString();
 }
 
+export function hashPassword(password: string) {
+    return SHA256(password).toString();
+ }
+ 
 export function encryptLocker({lockerKey, locker}: {
     lockerKey: string;
     locker: string;

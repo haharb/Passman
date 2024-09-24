@@ -1,7 +1,7 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { generateLockerKey, decryptLocker } from "../crypto";
+import { generateLockerKey, decryptLocker, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { registerUser } from "../api";
 import { Dispatch, SetStateAction, useEffect } from "react";
@@ -9,6 +9,9 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 interface RegisterFormValues {
   username: string;
   password: string;
+  hashedPassword: string;
+
+
 }
 
 interface RegisterFormProps {
@@ -20,34 +23,31 @@ export default function RegisterForm({
   setLockerKey,
   setStep,
 }: RegisterFormProps) {
-  useEffect(() => {
-    window.sessionStorage.clear();
-  }, []);
 
   const {
     handleSubmit,
     register,
     getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>();
 
   const mutation = useMutation(registerUser, {
     onSuccess: ({ salt, locker }) => {
       const username = getValues("username");
-      const password = getValues("password");
+      const hashedPassword = getValues("hashedPassword");
 
+      //Locker key is generated using the username and password concatenated and a salt
       const lockerKey = generateLockerKey({
         username,
-        password,
+        hashedPassword,
         salt,
       });
 
-      const decryptedLocker = decryptLocker({ locker, lockerKey });
-      setLockerKey(lockerKey);
-
       // Store locker and lockerKey securely in sessionStorage
       window.sessionStorage.setItem("lockerKey", lockerKey);
-      window.sessionStorage.setItem("locker", JSON.stringify(decryptedLocker));
+      setLockerKey(lockerKey);
+      window.sessionStorage.setItem("locker", "");
 
       setStep("locker");
     },
@@ -59,9 +59,11 @@ export default function RegisterForm({
   const onSubmit: SubmitHandler<RegisterFormValues> = async () => {
     const username = getValues("username");
     const password = getValues("password");
+    const hashedPassword = hashPassword(password);
+    setValue("hashedPassword", hashedPassword);
 
     try {
-      await mutation.mutateAsync({ username, password });
+      await mutation.mutateAsync({ username, hashedPassword });
     } catch (error) {
       console.error("Error during registration:", error);
     }

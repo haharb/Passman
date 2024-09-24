@@ -1,7 +1,7 @@
 import {Button, FormControl, FormErrorMessage,FormLabel, Heading, Input} from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { decryptLocker, generateLockerKey } from "../crypto";
+import { decryptLocker, generateLockerKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
 import { loginUser } from "../api";
 import { Dispatch, SetStateAction } from "react";
@@ -10,6 +10,7 @@ import { LockerItem } from "../pages";
 interface LoginFormValues {
     username: string;
     password: string;
+    hashedPassword: string;
 }
 
 interface LoginFormProps {
@@ -27,27 +28,28 @@ export default function LoginForm({
         handleSubmit,
         register,
         getValues,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormValues>();
 
     const mutation = useMutation(loginUser, {
         onSuccess: ({ salt, locker }) => {
             const username = getValues("username");
-            const password = getValues("password");
+            const hashedPassword = getValues("hashedPassword");
 
             // Generate locker key using password, username, and salt
             const lockerKey = generateLockerKey({
                 username,
-                password,
+                hashedPassword,
                 salt,
             });
-
+            window.sessionStorage.setItem("lockerKey", lockerKey);
             const decryptedLocker = decryptLocker({ locker, lockerKey });
             setLockerKey(lockerKey);
             setLocker(decryptedLocker);
 
             // TODO: check for risk of XSS
-            window.sessionStorage.setItem("locker", decryptedLocker);
+            window.sessionStorage.setItem("locker", JSON.stringify(decryptedLocker));
 
             setStep("locker");
         },
@@ -57,11 +59,14 @@ export default function LoginForm({
     });
 
     const onSubmit: SubmitHandler<LoginFormValues> = async () => {
-        const username = getValues("username");
         const password = getValues("password");
+        const username = getValues("username");
+
+        const hashedPassword = hashPassword(password);
+        setValue("hashedPassword", hashedPassword);
 
         try {
-            await mutation.mutateAsync({password, username});
+            await mutation.mutateAsync({hashedPassword, username});
         } catch (error) {
             //TODO: add error logging
         }

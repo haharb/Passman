@@ -3,7 +3,8 @@ import createServer from "./utils/createServer";
 import logger from "./utils/logger";
 import { connectToDb, disconnectFromDb } from "./utils/db";
 
-function dbShutDown(signal: string, app: FastifyInstance){// Shuts down db gracefully.
+// Shut down db gracefully.
+function dbShutDown(signal: string, app: FastifyInstance){
     process.on(signal, async() =>{// What to do when a shutdown signal (SIGTERM or SIGINT for example) is received.
         logger.info(`Signal ${signal} received, shutting down, goodbye!`);
         logger.flush();
